@@ -53,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tradingapp.compose.account.GainsScreen
 import com.example.tradingapp.ui.theme.Green
 import com.example.tradingapp.ui.theme.Grey
 import kotlin.math.roundToInt
@@ -68,8 +69,7 @@ fun PaymentScreen() {
         sheetState = bottomSheetState,
         onDismissRequest = {}
     ) {
-        MainContent {
-        }
+        GainsScreen()
     }
 }
 

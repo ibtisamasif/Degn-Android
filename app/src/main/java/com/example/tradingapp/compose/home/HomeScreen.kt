@@ -2,6 +2,7 @@ package com.example.tradingapp.compose.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,33 +22,38 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.tradingapp.R
 import com.example.tradingapp.ui.theme.Green
+import com.example.tradingapp.ui.theme.Purple
 import com.example.tradingapp.ui.theme.Red
 import com.example.tradingapp.ui.theme.TradingAppTheme
+import com.example.tradingapp.ui.theme.gradient
 
 @Composable
 fun HomeScreen(isHome: Boolean) {
@@ -61,7 +67,7 @@ fun HomeScreen(isHome: Boolean) {
                     TopBar()
                 }
             },
-            bottomBar = { BottomNavigationBar(if (isHome) 0 else 1) }
+            bottomBar = { BottomNavigationBar(if (isHome) 0 else 1,) }
         ) { paddingValues ->
             Column(
                 modifier = Modifier
@@ -75,7 +81,7 @@ fun HomeScreen(isHome: Boolean) {
                 Spacer(modifier = Modifier.height(if (isHome) 16.dp else 12.dp))
                 SpotlightSection()
                 Spacer(modifier = Modifier.height(16.dp))
-                ListSection()
+                ListSection(10)
             }
         }
     }
@@ -93,7 +99,7 @@ fun TopBar() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.height(64.dp))
-        Icon(Icons.Default.Face, contentDescription = "History Icon")
+        Icon(painter = painterResource(R.drawable.history), contentDescription = "History Icon", modifier = Modifier.padding(start = 16.dp).size(20.dp))
         OutlinedTextField(
             value = search,
             onValueChange = { search = it },
@@ -121,7 +127,7 @@ fun TopBar() {
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
             ),
         )
-        Icon(Icons.Default.Settings, contentDescription = "Settings Icon")
+        Icon(Icons.Default.Settings, contentDescription = "Settings Icon", modifier = Modifier.padding(end = 16.dp))
     }
 }
 
@@ -140,17 +146,34 @@ fun BalanceSection() {
 @Composable
 fun SpotlightSection() {
     Card(
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, Green),
+        shape = RoundedCornerShape(21.5.dp),
+        border = BorderStroke(1.dp, gradient),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier
+            .background(Color.White)
+            .padding(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Default.Star, contentDescription = "Spotlight Icon", tint = Green)
+                Box(
+                    modifier = Modifier
+                        .graphicsLayer(alpha = 0.99f) // Ensure the gradient renders correctly
+                        .drawWithCache {
+                            onDrawWithContent {
+                                drawContent()
+                                drawRect(gradient, blendMode = BlendMode.SrcIn)
+                            }
+                        }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.star),
+                        contentDescription = "Spotlight Icon",
+                        tint = Color.Unspecified
+                    )
+                }
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Spotlight", style = MaterialTheme.typography.titleMedium, color = Green)
+                Text("Spotlight", style = MaterialTheme.typography.titleLarge.copy(gradient))
                 Spacer(modifier = Modifier.weight(1f))
                 Text("Live", color = Green)
             }
@@ -182,9 +205,9 @@ fun SpotlightSection() {
 }
 
 @Composable
-fun ListSection() {
+fun ListSection(count: Int) {
     LazyColumn {
-        items(10) { index ->
+        items(count) { index ->
             ListItem(
                 image = if (index % 3 == 0) R.drawable.chill_doge else if (index % 3 == 1) R.drawable.dino else R.drawable.bonk,
                 name = if (index % 3 == 0) "Chill Doge" else if (index % 3 == 1) "Dino" else "Bonk",
@@ -237,70 +260,56 @@ fun BottomNavigationBar(index: Int) {
     ) {
         NavigationBarItem(
             icon = {
-                Image(
+                Icon(
                     painter = painterResource(id = if (selectedIndex.intValue == 0) R.drawable.home else R.drawable.home_outline),
                     contentDescription = "Home Icon",
-                    Modifier.size(24.dp)
+                    Modifier.size(24.dp),
+                    tint = if (selectedIndex.intValue == 0) Purple else Color.Black
                 )
             },
             label = { Text("Home") },
             selected = selectedIndex.intValue == 0,
             onClick = { selectedIndex.intValue = 0 },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent
-            )
         )
         NavigationBarItem(
             icon = {
-                Image(
+                Icon(
                     painter = painterResource(id = if (selectedIndex.intValue == 1) R.drawable.trending else R.drawable.trending_outline),
                     contentDescription = "Trending Icon",
-                    Modifier.size(24.dp)
+                    Modifier.size(24.dp),
+                    tint = if (selectedIndex.intValue == 1) Purple else Color.Black
                 )
             },
             label = { Text("Trending") },
             selected = selectedIndex.intValue == 1,
             onClick = { selectedIndex.intValue = 1 },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent // Remove the hover background effect
-            )
         )
         NavigationBarItem(
             icon = {
-                Image(
+                Icon(
                     painter = painterResource(id = if (selectedIndex.intValue == 2) R.drawable.rewards else R.drawable.rewards_outline),
                     contentDescription = "Rewards Icon",
-                    Modifier.size(24.dp)
+                    Modifier.size(24.dp),
+                    tint = if (selectedIndex.intValue == 2) Purple else Color.Black
                 )
             },
             label = { Text("Rewards") },
             selected = selectedIndex.intValue == 2,
             onClick = { selectedIndex.intValue = 2 },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent
-            )
         )
         NavigationBarItem(
             icon = {
-                Image(
+                Icon(
                     painter = painterResource(id = if (selectedIndex.intValue == 3) R.drawable.wallet else R.drawable.wallet_outline),
                     contentDescription = "Wallet Icon",
                     Modifier.size(24.dp),
+                    tint = if (selectedIndex.intValue == 3) Purple else Color.Black
                 )
             },
             label = { Text("Wallet") },
             selected = selectedIndex.intValue == 3,
             onClick = { selectedIndex.intValue = 3 },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent
-            )
         )
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewHomeScreen() {
-    HomeScreen(true)
-}

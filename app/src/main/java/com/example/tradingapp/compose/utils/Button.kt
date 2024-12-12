@@ -13,17 +13,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.tradingapp.ui.theme.Green
+import com.example.tradingapp.ui.theme.Purple
 
 @Composable
-fun CustomizedButton(text: String, icon: Int?) {
+fun CustomizedButton(text: String, icon: Int?,onButtonClick: () -> Unit) {
     Button(
-        onClick = { },
+        onClick = {onButtonClick()},
         modifier = Modifier
-            .padding(horizontal = 64.dp)
+            .padding(horizontal = 16.dp)
             .padding(bottom = 64.dp)
             .fillMaxWidth()
             .height(48.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Green),
+        colors = ButtonDefaults.buttonColors(containerColor = Purple),
         shape = RoundedCornerShape(12.dp)
     ) {
         if (icon != null) {

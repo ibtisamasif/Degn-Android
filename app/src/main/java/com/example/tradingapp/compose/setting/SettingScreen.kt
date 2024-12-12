@@ -115,7 +115,7 @@ fun SettingsScreen() {
 }
 
 @Composable
-fun SettingItem(icon: ImageVector, title: String) {
+fun SettingItem(icon: ImageVector, title: String, color: Color = Color.Black) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -125,10 +125,11 @@ fun SettingItem(icon: ImageVector, title: String) {
         Icon(
             imageVector = icon,
             contentDescription = title,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
+            tint = color
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = title, fontWeight = FontWeight.Medium)
+        Text(text = title, fontWeight = FontWeight.Medium, color = color)
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = Icons.Default.KeyboardArrowRight,

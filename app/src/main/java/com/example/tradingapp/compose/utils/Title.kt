@@ -1,9 +1,11 @@
 package com.example.tradingapp.compose.utils
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,26 +28,29 @@ import com.example.tradingapp.ui.theme.TradingAppTheme
 @Composable
 fun Title(title: String, onBackPress: () -> Unit) {
     TradingAppTheme {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+        Box(
             modifier = Modifier
-                .fillMaxWidth(.6f)
+                .fillMaxWidth()
+                .height(110.dp)
                 .padding(top = 32.dp, bottom = 16.dp)
         ) {
-            IconButton(onClick = onBackPress) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowLeft,
-                    contentDescription = "Back",
-                    modifier = Modifier.size(64.dp)
+            Box(modifier = Modifier.align(Alignment.CenterStart)) {
+                IconButton(onClick = onBackPress,) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "Back",
+                        modifier = Modifier.size(64.dp)
+                    )
+                }
+            }
+            Box(modifier = Modifier.align(Alignment.Center)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
         }
     }
 }

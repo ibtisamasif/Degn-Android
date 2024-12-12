@@ -1,5 +1,7 @@
 package com.example.tradingapp.compose.authentication
 
+import android.content.Intent
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -35,15 +38,24 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.tradingapp.compose.utils.CustomizedButton
 import com.example.tradingapp.compose.utils.Title
-import com.example.tradingapp.ui.theme.Green
 import com.example.tradingapp.ui.theme.TradingAppTheme
+import com.example.tradingapp.utils.BiometricPromptManager
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+import androidx.compose.foundation.background
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
 
 @Composable
-fun EnterEmailScreen(isEmail: Boolean) {
+fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonClick: ()-> Unit) {
     TradingAppTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color.White)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -78,8 +90,39 @@ fun EnterEmailScreen(isEmail: Boolean) {
                 verticalAlignment = Alignment.Bottom,
                 modifier = Modifier.weight(1f)
             ) {
-                CustomizedButton("Next", null)
+                CustomizedButton("Next", null, onButtonClick = {onButtonClick()})
             }
+        }
+    }
+
+    val biometricResult by promptManager.promptResults.collectAsState(initial = null)
+    val enrollLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { onButtonClick() }
+    )
+    val count = remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(biometricResult) {
+        if (biometricResult is BiometricPromptManager.BiometricResult.AuthenticationNotSet) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
+                    putExtra(
+                        Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
+                        BIOMETRIC_STRONG or DEVICE_CREDENTIAL
+                    )
+                }
+                enrollLauncher.launch(enrollIntent)
+            }
+        }
+    }
+
+    if(!isEmail) {
+        BiometricAuthContent(
+            biometricResult = biometricResult,
+            promptManager = promptManager,
+            count = count.intValue
+        ){
+            count.intValue = it
         }
     }
 }
@@ -112,7 +155,6 @@ fun EmailField() {
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun OtpInputField(
     otpLength: Int = 6,
@@ -134,7 +176,7 @@ fun OtpInputField(
 
     Row(
         modifier = Modifier.padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         otpValues.forEachIndexed { index, value ->
             OutlinedTextField(
@@ -154,7 +196,7 @@ fun OtpInputField(
                     }
                 },
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(40.dp)
                     .focusRequester(focusRequesters[index]),
                 textStyle = MaterialTheme.typography.bodyMedium,
                 colors = OutlinedTextFieldDefaults.colors(
@@ -186,5 +228,38 @@ fun OtpInputField(
         }
     }
 }
+
+@Composable
+fun BiometricAuthContent(
+    biometricResult: BiometricPromptManager.BiometricResult?,
+    promptManager: BiometricPromptManager,
+    count: Int,
+    onSuccess: (Int) -> Unit
+) {
+    var isPromptShown by remember { mutableStateOf(false) } // Track if the prompt has been shown
+
+    LaunchedEffect(biometricResult) {
+        if (biometricResult is BiometricPromptManager.BiometricResult.AuthenticationSuccess) {
+            onSuccess(count + 1)
+        }
+    }
+
+    if (count < 1 && !isPromptShown) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            promptManager.showBiometricPrompt(
+                title = "Authenticate",
+                description = "Authenticate with biometrics to proceed."
+            )
+            isPromptShown = true // Ensure prompt is not shown again
+        }
+    }
+}
+
+
+
 
 
