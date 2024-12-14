@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.tradingapp"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -67,4 +67,6 @@ dependencies {
 
     implementation(libs.androidx.biometric.v110)
     implementation(libs.androidx.appcompat)
+
+    implementation(libs.moonpaysdk.android)
 }
