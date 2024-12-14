@@ -90,7 +90,7 @@ fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonC
                 verticalAlignment = Alignment.Bottom,
                 modifier = Modifier.weight(1f)
             ) {
-                CustomizedButton("Next", null, onButtonClick = {onButtonClick()})
+                CustomizedButton("Next", 64,null, onButtonClick = {onButtonClick()})
             }
         }
     }

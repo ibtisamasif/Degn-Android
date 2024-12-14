@@ -1,8 +1,9 @@
 package com.example.tradingapp.compose.notification
 
-import android.credentials.CredentialDescription
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import com.example.tradingapp.R
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.tradingapp.compose.utils.CustomizedButton
 import com.example.tradingapp.compose.utils.Title
@@ -21,15 +23,17 @@ fun NotificationScreen(){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxWidth()
+            .background(Color.White)
+            .fillMaxSize()
             .padding(start = 16.dp)
     ) {
+        Spacer(modifier = Modifier.height(32.dp))
         Title("Notifications") {}
         Spacer(modifier = Modifier.height(16.dp))
         TitleAndDescription("Push Notification","Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tristique vehicula purus.")
         Spacer(modifier = Modifier.height(16.dp))
 
-        CustomizedButton("Enable in Setting",R.drawable.bell_icon){}
+        CustomizedButton("Enable in Setting",64,R.drawable.bell_icon){}
     }
 }
 

@@ -58,7 +58,7 @@ fun LegalAndPrivacy(){
 
         settingsItems.forEach { item ->
             val color = if(item.second == "Delete Account") Color.Red else Color.Black
-            SettingItem(icon = item.first, title = item.second, color = color)
+            SettingItem(icon = item.first, title = item.second, color = color){}
         }
     }
 }

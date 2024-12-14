@@ -3,6 +3,7 @@ package com.example.tradingapp.compose.home
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,7 +57,7 @@ import com.example.tradingapp.ui.theme.TradingAppTheme
 import com.example.tradingapp.ui.theme.gradient
 
 @Composable
-fun HomeScreen(isHome: Boolean) {
+fun HomeScreen(isHome: Boolean, onItemSelected: (Int) -> Unit) {
     TradingAppTheme {
         Scaffold(
             topBar = {
@@ -64,10 +65,10 @@ fun HomeScreen(isHome: Boolean) {
                     modifier = Modifier
                         .padding(top = 32.dp)
                 ) {
-                    TopBar()
+                    TopBar{onItemSelected.invoke(it)}
                 }
             },
-            bottomBar = { BottomNavigationBar(if (isHome) 0 else 1,) }
+            bottomBar = { BottomNavigationBar(if (isHome) 0 else 1) { onItemSelected.invoke(it) } }
         ) { paddingValues ->
             Column(
                 modifier = Modifier
@@ -89,7 +90,7 @@ fun HomeScreen(isHome: Boolean) {
 
 
 @Composable
-fun TopBar() {
+fun TopBar(onSettingClicked: (Int) -> Unit) {
     var search by remember { mutableStateOf("") }
     Row(
         modifier = Modifier
@@ -99,7 +100,14 @@ fun TopBar() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.height(64.dp))
-        Icon(painter = painterResource(R.drawable.history), contentDescription = "History Icon", modifier = Modifier.padding(start = 16.dp).size(20.dp))
+        Icon(
+            painter = painterResource(R.drawable.history),
+            contentDescription = "History Icon",
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .size(20.dp)
+                .clickable { onSettingClicked.invoke(5) }
+        )
         OutlinedTextField(
             value = search,
             onValueChange = { search = it },
@@ -127,7 +135,12 @@ fun TopBar() {
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
             ),
         )
-        Icon(Icons.Default.Settings, contentDescription = "Settings Icon", modifier = Modifier.padding(end = 16.dp))
+        Icon(
+            Icons.Default.Settings,
+            contentDescription = "Settings Icon",
+            modifier = Modifier.padding(end = 16.dp)
+                .clickable { onSettingClicked.invoke(4) }
+        )
     }
 }
 
@@ -150,9 +163,11 @@ fun SpotlightSection() {
         border = BorderStroke(1.dp, gradient),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier
-            .background(Color.White)
-            .padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .background(Color.White)
+                .padding(16.dp)
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -252,7 +267,7 @@ fun ListItem(image: Int, name: String, price: String, marketCap: String, isPosit
 }
 
 @Composable
-fun BottomNavigationBar(index: Int) {
+fun BottomNavigationBar(index: Int, onItemSelected: (Int) -> Unit) {
     val selectedIndex = remember { mutableIntStateOf(index) }
 
     NavigationBar(
@@ -269,7 +284,10 @@ fun BottomNavigationBar(index: Int) {
             },
             label = { Text("Home") },
             selected = selectedIndex.intValue == 0,
-            onClick = { selectedIndex.intValue = 0 },
+            onClick = {
+                selectedIndex.intValue = 0
+                onItemSelected.invoke(0)
+            },
         )
         NavigationBarItem(
             icon = {
@@ -282,7 +300,10 @@ fun BottomNavigationBar(index: Int) {
             },
             label = { Text("Trending") },
             selected = selectedIndex.intValue == 1,
-            onClick = { selectedIndex.intValue = 1 },
+            onClick = {
+                selectedIndex.intValue = 1
+                onItemSelected.invoke(1)
+            },
         )
         NavigationBarItem(
             icon = {
@@ -295,7 +316,10 @@ fun BottomNavigationBar(index: Int) {
             },
             label = { Text("Rewards") },
             selected = selectedIndex.intValue == 2,
-            onClick = { selectedIndex.intValue = 2 },
+            onClick = {
+                selectedIndex.intValue = 2
+                onItemSelected.invoke(2)
+            },
         )
         NavigationBarItem(
             icon = {
@@ -308,7 +332,10 @@ fun BottomNavigationBar(index: Int) {
             },
             label = { Text("Wallet") },
             selected = selectedIndex.intValue == 3,
-            onClick = { selectedIndex.intValue = 3 },
+            onClick = {
+                selectedIndex.intValue = 3
+                onItemSelected.invoke(3)
+            },
         )
     }
 }

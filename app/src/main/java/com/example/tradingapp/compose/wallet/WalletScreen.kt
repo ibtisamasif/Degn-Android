@@ -14,6 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,6 +30,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,10 +43,12 @@ import androidx.compose.ui.unit.dp
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.home.BottomNavigationBar
 import com.example.tradingapp.compose.home.TopBar
+import com.example.tradingapp.compose.payment.BottomSheet
+import com.example.tradingapp.ui.theme.Purple
 import com.example.tradingapp.ui.theme.TradingAppTheme
 
 @Composable
-fun WalletScreen() {
+fun WalletScreen(onItemSelected: (Int)-> Unit) {
     TradingAppTheme {
         Scaffold(
             topBar = {
@@ -45,157 +56,164 @@ fun WalletScreen() {
                     modifier = Modifier
                         .padding(top = 32.dp)
                 ) {
-                    TopBar()
+                    TopBar{onItemSelected.invoke(it)}
                 }
             },
-            bottomBar = { BottomNavigationBar(3) }
+            bottomBar = { BottomNavigationBar(3){onItemSelected.invoke(it)} }
         ) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .background(Color.White)
                     .padding(16.dp)
+                    .padding(paddingValues),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Profile Icon
-                Box(
+                var openSheet by remember { mutableStateOf(false) }
+                var sheetName by remember { mutableStateOf("") }
+                // Profile Section
+                Image(
+                    painter = painterResource(id = R.drawable.edit_profile), // Replace with actual drawable
+                    contentDescription = "Profile Picture",
                     modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFF0F0F0)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Profile Icon",
-                        tint = Color.Gray,
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
+                        .size(95.dp)
+                )
 
-                // Username
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Text(
                     text = "@yourusername123",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp)
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray
                 )
 
-                // Total Balance
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Balance Section
                 Text(
                     text = "Total balance",
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 16.dp)
+                    fontSize = 14.sp,
+                    color = Color.Gray
                 )
+
                 Text(
                     text = "0.00 USD",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 8.dp)
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
+
                 Text(
-                    text = "\u25B2 $0.226 Past day",
-                    style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF00C853)),
-                    modifier = Modifier.padding(top = 4.dp)
+                    text = "▲ $0.226 Past day",
+                    fontSize = 12.sp,
+                    color = Color.Green
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Action Buttons
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 24.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    ActionButton(iconRes = R.drawable.dollar_icon, label = "Add cash")
-                    ActionButton(iconRes = R.drawable.send, label = "Send")
-                    ActionButton(iconRes = R.drawable.ic_cashout, label = "Cash out")
+                    ActionButton(icon = R.drawable.dollar_icon, label = "Add cash"){
+                        openSheet = true
+                        sheetName = "Deposit"
+                    }
+                    ActionButton(icon = R.drawable.send, label = "Send"){
+                        openSheet = true
+                        sheetName = "Send"
+                    }
+                    ActionButton(icon = R.drawable.ic_cashout, label = "Cash out"){
+                        openSheet = true
+                        sheetName = "Withdraw"
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Cash Section
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, Color.Black, CircleShape)
+                        .padding(12.dp),
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = "Cash*", style = MaterialTheme.typography.bodyMedium)
-                            Text(text = "$0.00", style = MaterialTheme.typography.bodyMedium)
-                        }
+                    Row(modifier = Modifier.weight(0.5f)) {
+                        Text(text = "Cash*", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = "$0.00",
+                            fontSize = 16.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.weight(0.5f),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_plus), // Replace with actual drawable
+                            contentDescription = "Add Cash",
+                            modifier = Modifier
+                                .size(25.dp)
+                                .clip(CircleShape)
+                        )
                     }
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(Color.LightGray)
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Holdings Section
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .border(1.dp, Color.Black, RoundedCornerShape(21.dp))
+                        .padding(12.dp),
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Row{
+                        Text(text = "Holdings", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         Text(
-                            text = "Holdings $0.00",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            text = "$0.00",
+                            fontSize = 16.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(start = 8.dp)
                         )
+                    }
 
-                        LazyColumn(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            items(holdingList) { holding ->
-                                HoldingItem(
-                                    name = holding.name,
-                                    tokens = holding.tokens,
-                                    value = holding.value,
-                                    growthColor = holding.growthColor
-                                )
-                                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(holdingList) { holding ->
+                            HoldingItem(
+                                name = holding.name,
+                                amount = holding.tokens,
+                                value = holding.value,
+                                change = "200.56%"
+                            ){
+                                openSheet = true
+                                sheetName = "Gain"
                             }
                         }
                     }
                 }
+                if (openSheet){
+                    BottomSheet(sheetName){
+                        openSheet = it
+                    }
+                }
             }
-        }
-    }
-}
-
-@Composable
-fun ActionButton(iconRes: Int, label: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable { /* Handle click */ }
-    ) {
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = label,
-            tint = Color(0xFF6C63FF),
-            modifier = Modifier.size(40.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall
-        )
-    }
-}
-
-@Composable
-fun HoldingItem(name: String, tokens: String, value: String, growthColor: Color) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            Text(text = name, style = MaterialTheme.typography.bodyMedium)
-            Text(text = tokens, style = MaterialTheme.typography.bodySmall)
-        }
-        Column(horizontalAlignment = Alignment.End) {
-            Text(text = value, style = MaterialTheme.typography.bodyMedium)
-            Text(
-                text = "\u25B2 200.55%",
-                style = MaterialTheme.typography.bodySmall.copy(color = growthColor)
-            )
         }
     }
 }
@@ -205,12 +223,74 @@ data class Holding(
     val name: String,
     val tokens: String,
     val value: String,
-    val growthColor: Color
 )
 
 // Sample Holding List
 val holdingList = listOf(
-    Holding("Bonk", "1/981 tokens", "$0.22", Color(0xFF00C853)),
-    Holding("Chill Doge", "1/981 tokens", "$0.22", Color(0xFF00C853)),
-    Holding("Shiba", "1/1000 tokens", "$0.50", Color(0xFF00C853))
+    Holding("Bonk", "1/981 tokens", "$0.22"),
+    Holding("Chill Doge", "1/981 tokens", "$0.22", ),
+    Holding("Shiba", "1/1000 tokens", "$0.50")
 )
+
+
+@Composable
+fun ActionButton(icon: Int, label: String,onClick: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = label,
+            modifier = Modifier
+                .size(43.dp)
+                .clip(CircleShape)
+                .background(Purple)
+                .padding(12.dp)
+                .clickable { onClick.invoke() },
+            tint = Color.White
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(text = label, fontSize = 12.sp, color = Color.Gray)
+    }
+}
+
+@Composable
+fun HoldingItem(name: String, amount: String, value: String, change: String,onShare: ()-> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(id = R.drawable.bonk),
+                contentDescription = name,
+                modifier = Modifier.size(36.dp).clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Column {
+                Text(text = name, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text(text = amount, fontSize = 12.sp, color = Color.Gray)
+            }
+        }
+        Row(horizontalArrangement = Arrangement.End) {
+            Column  {
+                Text(text = value, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text(text = change, fontSize = 12.sp, color = Color.Green)
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.share),
+                    contentDescription = "share",
+                    modifier = Modifier.size(25.dp).clip(CircleShape).background(Purple).padding(5.dp).clickable { onShare.invoke() }
+                )
+            }
+        }
+    }
+}

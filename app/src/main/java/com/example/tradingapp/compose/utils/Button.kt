@@ -16,12 +16,12 @@ import com.example.tradingapp.ui.theme.Green
 import com.example.tradingapp.ui.theme.Purple
 
 @Composable
-fun CustomizedButton(text: String, icon: Int?,onButtonClick: () -> Unit) {
+fun CustomizedButton(text: String,paddingBottom: Int, icon: Int?,onButtonClick: () -> Unit) {
     Button(
         onClick = {onButtonClick()},
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .padding(bottom = 64.dp)
+            .padding(bottom = paddingBottom.dp)
             .fillMaxWidth()
             .height(48.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Purple),

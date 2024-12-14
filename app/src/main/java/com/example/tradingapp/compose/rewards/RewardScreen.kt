@@ -28,7 +28,7 @@ import com.example.tradingapp.compose.utils.CustomizedButton
 import com.example.tradingapp.ui.theme.TradingAppTheme
 
 @Composable
-fun RewardScreen() {
+fun RewardScreen(onItemSelected: (Int) -> Unit) {
     TradingAppTheme {
         Scaffold(
             topBar = {
@@ -36,23 +36,24 @@ fun RewardScreen() {
                     modifier = Modifier
                         .padding(top = 32.dp)
                 ) {
-                    TopBar()
+                    TopBar{onItemSelected.invoke(it)}
                 }
             },
-            bottomBar = { BottomNavigationBar(2) }
+            bottomBar = { BottomNavigationBar(2){onItemSelected.invoke(it)} }
         ) { paddingValues ->
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp)
+                    .padding(24.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_dollar),
                     contentDescription = "Dollar Icon",
                     tint = Color(0xFF6C63FF),
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(90.dp)
                         .padding(bottom = 16.dp)
                 )
 
@@ -96,9 +97,7 @@ fun RewardScreen() {
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                CustomizedButton("Invite",R.drawable.share) { }
-
-                Spacer(modifier = Modifier.height(16.dp))
+                CustomizedButton("Invite",16,R.drawable.share) { }
 
                 Text(
                     text = "*Earn 50% of all trading fees from each friend you refer.",

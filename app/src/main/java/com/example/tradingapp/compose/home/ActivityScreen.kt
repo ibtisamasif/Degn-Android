@@ -16,7 +16,7 @@ import com.example.tradingapp.compose.utils.Title
 fun ActivityScreen(){
     Scaffold(
         topBar = {Title(title = "Activity") { }},
-        bottomBar = { BottomNavigationBar(0) }
+        bottomBar = { BottomNavigationBar(0){} }
     ) { paddingValues ->
         Column(
             modifier = Modifier

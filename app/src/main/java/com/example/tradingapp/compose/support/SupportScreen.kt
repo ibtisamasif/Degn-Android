@@ -1,12 +1,15 @@
 package com.example.tradingapp.compose.support
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,31 +32,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.tradingapp.R
 
 @Composable
-fun SupportScreen(onDismiss: () -> Unit) {
+fun SupportScreen(onCloseBottomSheet: (Boolean) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFF5F5F5), RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+            .fillMaxHeight(0.99f)
+            .background(Color.White, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .padding(16.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.Start
         ) {
             Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.TopEnd
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                IconButton(onClick = onDismiss) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowLeft,
-                        contentDescription = "Close",
-                        tint = Color.Green
-                    )
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.close), // replace with your close button image resource
+                    contentDescription = "Close",
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(horizontal = 16.dp)
+                        .size(36.dp)
+                        .clickable { onCloseBottomSheet.invoke(true) }
+                )
             }
 
             Row(
@@ -63,7 +71,7 @@ fun SupportScreen(onDismiss: () -> Unit) {
                 repeat(3) {
                     Box(
                         modifier = Modifier
-                            .size(16.dp)
+                            .size(20.dp)
                             .background(Color.Black, CircleShape)
                             .padding(4.dp)
                     )

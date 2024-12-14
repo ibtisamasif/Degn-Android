@@ -1,8 +1,10 @@
 package com.example.tradingapp.compose.payment
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
@@ -12,7 +14,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +25,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -39,43 +45,53 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tradingapp.R
 import com.example.tradingapp.compose.account.GainsScreen
+import com.example.tradingapp.compose.support.SupportScreen
 import com.example.tradingapp.ui.theme.Green
 import com.example.tradingapp.ui.theme.Grey
+import com.example.tradingapp.ui.theme.Purple
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentScreen() {
+fun BottomSheet(screenName: String, onCloseBottomSheet: (Boolean) -> Unit) {
     val bottomSheetState =
-        rememberModalBottomSheetState()
+        rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
 
     ModalBottomSheet(
         sheetState = bottomSheetState,
-        onDismissRequest = {}
+        onDismissRequest = {onCloseBottomSheet.invoke(false)},
+        containerColor = Color.White
     ) {
-        GainsScreen()
+        when (screenName) {
+            "Gain" -> GainsScreen{onCloseBottomSheet.invoke(!it)}
+            "Send" -> PaymentScreen{}
+            "Withdraw" -> PaymentScreen{}
+            "Deposit" -> PaymentScreen{}
+            "Support" -> SupportScreen {onCloseBottomSheet.invoke(!it)}
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContent(onShowBottomSheet: () -> Unit) {
+fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -92,9 +108,14 @@ fun MainContent(onShowBottomSheet: () -> Unit) {
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.weight(0.5f)
             )
-            IconButton(onClick = { /* Handle close */ }) {
-                Icon(Icons.Rounded.Close, contentDescription = "Close", tint = Color.Green)
-            }
+            Image(
+                painter = painterResource(R.drawable.close),
+                contentDescription = "Close",
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .size(36.dp)
+                    .clickable { onCloseBottomSheet.invoke(true) }
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -128,27 +149,33 @@ fun MainContent(onShowBottomSheet: () -> Unit) {
             Text(text = "$0", fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.Gray)
 
             // Percentage Buttons
+            var selectedPercentage by remember { mutableStateOf("25%") }
+
+            // Row with buttons
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp)
             ) {
+                // List of labels for buttons
                 listOf("10%", "25%", "50%", "MAX").forEachIndexed { index, label ->
-                    Button(
-                        onClick = { /* Handle percentage selection */ },
-                        colors = if (index == 1) ButtonDefaults.buttonColors(containerColor = Color.Green) else ButtonDefaults.buttonColors(
-                            containerColor = Color.LightGray
-                        ),
-                        shape = RoundedCornerShape(12.dp),
+                    Box(
                         modifier = Modifier
-                            .defaultMinSize(minWidth = 64.dp)
+                            .weight(1f)
                             .padding(4.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .size(36.dp)
+                            .background(if (selectedPercentage == label) Purple else Color.White)
+                            .clickable { selectedPercentage = label }
                     ) {
                         Text(
                             text = label,
-                            fontSize = 14.sp,
-                            color = if (index == 1) Color.White else Color.Black
+                            fontSize = 12.sp,
+                            color = if (selectedPercentage == label) Color.White else Color.Black,
+                            modifier = Modifier
+                                .fillMaxSize() // Make Text take up all available space
+                                .wrapContentSize(align = Alignment.Center) // Center the text
                         )
                     }
                 }
@@ -160,9 +187,8 @@ fun MainContent(onShowBottomSheet: () -> Unit) {
         // Numeric Keypad
         NumericKeypad(onKeyPress = { /* Handle key press */ })
 
-        Spacer(modifier = Modifier.weight(1f))
-        Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-            Spacer(modifier = Modifier.width(32.dp))
+        Spacer(modifier = Modifier.weight(0.3f))
+        Row(modifier = Modifier.weight(0.8f).padding(16.dp),horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
             ConfirmationButton()
         }
 
@@ -187,11 +213,11 @@ fun NumericKeypad(onKeyPress: (String) -> Unit) {
                         onClick = { onKeyPress(key) },
                         shape = CircleShape,
                         colors = ButtonDefaults.buttonColors(
-                            contentColor = MaterialTheme.colorScheme.onBackground,
-                            containerColor = MaterialTheme.colorScheme.background
+                            contentColor = Color.Black,
+                            containerColor = Color.White
                         ),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
-                        modifier = Modifier.size(80.dp)
+                        modifier = Modifier.size(68.dp)
                     ) {
                         if (key !== "") {
                             Text(text = key, fontSize = 36.sp)
@@ -284,7 +310,7 @@ private fun DraggableControl(
                 clip = false
             )
             .background(
-                color = Color.White,
+                color = Purple,
                 shape = RoundedCornerShape(18.dp)
             ),
         contentAlignment = Alignment.Center
@@ -294,13 +320,13 @@ private fun DraggableControl(
                 Icon(
                     imageVector = Icons.Filled.Done,
                     contentDescription = "Confirm Icon",
-                    tint = Green
+                    tint = Color.White
                 )
             } else {
                 Icon(
                     imageVector = Icons.Filled.ArrowForward,
                     contentDescription = "Forward Icon",
-                    tint = Green
+                    tint = Color.White
                 )
             }
         }

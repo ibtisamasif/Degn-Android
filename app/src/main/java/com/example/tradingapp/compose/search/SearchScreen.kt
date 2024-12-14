@@ -37,7 +37,7 @@ fun SearchScreen() {
                 modifier = Modifier
                     .padding(top = 32.dp)
             ) {
-                TopBar()
+                TopBar{}
             }
         },
     ) { paddingValues ->

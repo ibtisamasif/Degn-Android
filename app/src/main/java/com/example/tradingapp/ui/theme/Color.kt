@@ -17,6 +17,8 @@ val Red = Color(0xFFFF3D3D)
 val Grey = Color(0xFFD9D9D9)
 val Grey45 = Grey.copy(alpha = 0.45f)
 val Purple = Color(0xFF6771EA)
+val Sky = Color(0xFF97ABF8)
+val OffWhite = Color(0xFFF1F1F1)
 
 val gradient = Brush.linearGradient(
     colors = listOf(

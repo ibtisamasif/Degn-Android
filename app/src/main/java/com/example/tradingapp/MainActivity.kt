@@ -34,8 +34,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             TradingAppTheme {
-//                NavController(activity = this,promptManager=promptManager)
-                WalletScreen()
+                NavController(activity = this,promptManager=promptManager)
             }
         }
     }

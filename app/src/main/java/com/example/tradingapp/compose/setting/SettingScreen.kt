@@ -1,6 +1,7 @@
 package com.example.tradingapp.compose.setting
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,8 +25,13 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.sharp.ExitToApp
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,10 +39,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tradingapp.compose.payment.BottomSheet
 import com.example.tradingapp.compose.utils.Title
+import com.example.tradingapp.ui.theme.OffWhite
+import com.example.tradingapp.ui.theme.Sky
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(onMenuCLicked: (String)-> Unit) {
+    var isShowSheet by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,17 +65,19 @@ fun SettingsScreen() {
                 .fillMaxWidth()
                 .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp))
                 .padding(16.dp)
+                .clickable { onMenuCLicked.invoke("Profile") }
         ) {
             Icon(
                 imageVector = Icons.Rounded.AccountCircle,
                 contentDescription = "Profile Icon",
                 modifier = Modifier
                     .size(48.dp)
-                    .background(Color.Gray, CircleShape)
+                    .background(OffWhite, CircleShape),
+                tint = Sky
             )
             Column {
                 Text(text = "@yourusername123", fontWeight = FontWeight.Bold)
-                Text(text = "youremailaddress@gmail.com", color = Color.Gray)
+                Text(text = "youremailaddress@gmail.com", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
             }
             Spacer(modifier = Modifier.weight(1f))
             Icon(
@@ -87,7 +99,10 @@ fun SettingsScreen() {
         )
 
         settingsItems.forEach { item ->
-            SettingItem(icon = item.first, title = item.second)
+            SettingItem(icon = item.first, title = item.second){item->
+                if(item == "Support") isShowSheet = true
+                else onMenuCLicked.invoke(item)
+            }
         }
 
         Spacer(modifier = Modifier.height(64.dp))
@@ -111,16 +126,20 @@ fun SettingsScreen() {
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "v1.5", color = Color.Gray, fontSize = 12.sp)
         }
+        if (isShowSheet) BottomSheet("Support"){
+            isShowSheet = it
+        }
     }
 }
 
 @Composable
-fun SettingItem(icon: ImageVector, title: String, color: Color = Color.Black) {
+fun SettingItem(icon: ImageVector, title: String, color: Color = Color.Black,onMenuCLicked: (String)-> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
+            .clickable { onMenuCLicked.invoke(title) }
     ) {
         Icon(
             imageVector = icon,

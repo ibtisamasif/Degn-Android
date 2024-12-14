@@ -89,13 +89,13 @@ fun SplashScreen(navController: NavController) {
                     .background(Color.Black, shape = CircleShape)
             )
         }
-        CustomizedButton("Next",null){
+        CustomizedButton("Next",64,null){
 
         }
     }
 
     LaunchedEffect(true) {
-        delay(3000)
+        delay(1000)
         navController.navigate(Screens.EmailScreen.route)
     }
 
