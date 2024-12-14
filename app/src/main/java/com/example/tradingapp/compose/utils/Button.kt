@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,7 +24,7 @@ fun CustomizedButton(text: String,paddingBottom: Int, icon: Int?,onButtonClick: 
             .padding(horizontal = 16.dp)
             .padding(bottom = paddingBottom.dp)
             .fillMaxWidth()
-            .height(48.dp),
+            .height(46.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Purple),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -34,7 +35,7 @@ fun CustomizedButton(text: String,paddingBottom: Int, icon: Int?,onButtonClick: 
                 modifier = Modifier.padding(end = 8.dp)
             )
         }
-        Text(text = text)
+        Text(text = text, style = MaterialTheme.typography.displayLarge)
     }
 }
 

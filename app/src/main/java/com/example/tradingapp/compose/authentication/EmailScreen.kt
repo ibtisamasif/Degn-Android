@@ -45,9 +45,17 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonClick: ()-> Unit) {
@@ -56,7 +64,7 @@ fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonC
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .padding(16.dp),
+                .padding(horizontal = 22.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -72,12 +80,12 @@ fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonC
 
             Text(
                 text = if (isEmail) "Enter your email" else "Verify your email",
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.headlineLarge
             )
 
             Text(
                 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tristique vehicula purus.",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp)
             )
 
@@ -88,7 +96,7 @@ fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonC
 
             Row(
                 verticalAlignment = Alignment.Bottom,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).padding(16.dp)
             ) {
                 CustomizedButton("Next", 64,null, onButtonClick = {onButtonClick()})
             }
@@ -130,30 +138,45 @@ fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonC
 @Composable
 fun EmailField() {
     var email by remember { mutableStateOf("") }
+
     OutlinedTextField(
         value = email,
         onValueChange = { email = it },
         placeholder = {
             Text(
                 text = "Enter email",
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.labelMedium
             )
         },
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(12.dp),
+            .height(50.dp)
+            .padding(horizontal = 16.dp)
+            .drawBehind {
+                val borderWidth = 1.dp.toPx()
+                val cornerRadius = 12.dp.toPx()
+                drawRoundRect(
+                    color = Color.Black,
+                    size = size.copy(
+                        width = size.width - borderWidth,
+                        height = size.height - borderWidth
+                    ),
+                    cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+                    style = Stroke(width = borderWidth)
+                )
+            },
         colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color.Transparent,
+            unfocusedBorderColor = Color.Transparent,
             cursorColor = Color.Black,
-            focusedBorderColor = Color.Black,
-            unfocusedBorderColor = Color.Black,
-            focusedTextColor = Color.Black,
-            unfocusedTextColor = Color.Black,
+            focusedTextColor  = Color.Black,
+            focusedPlaceholderColor = Color.Gray
         ),
+        textStyle = MaterialTheme.typography.labelMedium
     )
 }
+
 
 @Composable
 fun OtpInputField(
@@ -176,58 +199,88 @@ fun OtpInputField(
 
     Row(
         modifier = Modifier.padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         otpValues.forEachIndexed { index, value ->
-            OutlinedTextField(
-                value = value,
-                onValueChange = { input ->
-                    if (input.length <= 1 && input.all { it.isDigit() }) {
-                        otpValues = otpValues.toMutableList().apply { set(index, input) }
-
-                        if (input.isNotEmpty() && index < otpLength - 1) {
-                            focusRequesters[index + 1].requestFocus()
-                        }
-
-                        if (otpValues.all { it.isNotEmpty() }) {
-                            keyboardController?.hide()
-                            onOtpComplete(otpValues.joinToString(""))
-                        }
-                    }
-                },
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(40.dp)
-                    .focusRequester(focusRequesters[index]),
-                textStyle = MaterialTheme.typography.bodyMedium,
-                colors = OutlinedTextFieldDefaults.colors(
-                    cursorColor = Color.Black,
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.Black,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                ),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = if (index == otpLength - 1) ImeAction.Done else ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        if (index < otpLength - 1) {
-                            focusRequesters[index + 1].requestFocus()
+                    .size(44.dp)
+                    .focusRequester(focusRequesters[index])
+                    .drawBehind {
+                        val borderWidth = 1.dp.toPx()
+                        val cornerRadius = 12.dp.toPx()
+                        drawRoundRect(
+                            color = Color.Black,
+                            size = size.copy(
+                                width = size.width - borderWidth,
+                                height = size.height - borderWidth
+                            ),
+                            cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+                            style = Stroke(width = borderWidth)
+                        )
+                    }
+            ) {
+                BasicTextField(
+                    value = value,
+                    onValueChange = { input ->
+                        if (input.length <= 1 && input.all { it.isDigit() }) {
+                            otpValues = otpValues.toMutableList().apply {
+                                set(index, input)
+                            }
+
+                            if (input.isEmpty()) {
+                                if (index > 0) {
+                                    focusRequesters[index - 1].requestFocus()
+                                }
+                            } else if (index < otpLength - 1) {
+                                focusRequesters[index + 1].requestFocus()
+                            }
+
+                            if (otpValues.all { it.isNotEmpty() }) {
+                                keyboardController?.hide()
+                                onOtpComplete(otpValues.joinToString(""))
+                            }
                         }
                     },
-                    onDone = {
-                        keyboardController?.hide()
-                        if (otpValues.all { it.isNotEmpty() }) {
-                            onOtpComplete(otpValues.joinToString(""))
+                    textStyle = MaterialTheme.typography.labelLarge.copy(
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.Black
+                    ),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = if (index == otpLength - 1) ImeAction.Done else ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            if (index < otpLength - 1) {
+                                focusRequesters[index + 1].requestFocus()
+                            }
+                        },
+                        onDone = {
+                            keyboardController?.hide()
+                            if (otpValues.all { it.isNotEmpty() }) {
+                                onOtpComplete(otpValues.joinToString(""))
+                            }
+                        }
+                    ),
+                    decorationBox = { innerTextField ->
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            innerTextField()
                         }
                     }
                 )
-            )
+            }
         }
     }
 }
+
+
 
 @Composable
 fun BiometricAuthContent(
@@ -236,7 +289,7 @@ fun BiometricAuthContent(
     count: Int,
     onSuccess: (Int) -> Unit
 ) {
-    var isPromptShown by remember { mutableStateOf(false) } // Track if the prompt has been shown
+    var isPromptShown by remember { mutableStateOf(false) }
 
     LaunchedEffect(biometricResult) {
         if (biometricResult is BiometricPromptManager.BiometricResult.AuthenticationSuccess) {
@@ -254,7 +307,7 @@ fun BiometricAuthContent(
                 title = "Authenticate",
                 description = "Authenticate with biometrics to proceed."
             )
-            isPromptShown = true // Ensure prompt is not shown again
+            isPromptShown = true
         }
     }
 }

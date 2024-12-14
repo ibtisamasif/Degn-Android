@@ -2,6 +2,7 @@ package com.example.tradingapp.data
 
 sealed class Screens(val route: String){
     data object SplashScreen : Screens("SplashScreen")
+    data object SliderScreen : Screens("SliderScreen")
     data object EmailScreen : Screens("EmailScreen")
     data object OTPScreen : Screens("OTPScreen")
     data object HomeScreen : Screens("HomeScreen")

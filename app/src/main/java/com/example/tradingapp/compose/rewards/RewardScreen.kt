@@ -19,12 +19,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
-import com.example.tradingapp.compose.home.BottomNavigationBar
-import com.example.tradingapp.compose.home.TopBar
+import com.example.tradingapp.compose.BottomNavigationBar
 import com.example.tradingapp.compose.utils.CustomizedButton
+import com.example.tradingapp.compose.utils.TopBar
 import com.example.tradingapp.ui.theme.TradingAppTheme
 
 @Composable
@@ -34,12 +39,12 @@ fun RewardScreen(onItemSelected: (Int) -> Unit) {
             topBar = {
                 Box(
                     modifier = Modifier
-                        .padding(top = 32.dp)
+                        .padding(top = 45.dp)
                 ) {
-                    TopBar{onItemSelected.invoke(it)}
+                    TopBar { onItemSelected.invoke(it) }
                 }
             },
-            bottomBar = { BottomNavigationBar(2){onItemSelected.invoke(it)} }
+            bottomBar = { BottomNavigationBar(2) { onItemSelected.invoke(it) } }
         ) { paddingValues ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -53,19 +58,24 @@ fun RewardScreen(onItemSelected: (Int) -> Unit) {
                     contentDescription = "Dollar Icon",
                     tint = Color(0xFF6C63FF),
                     modifier = Modifier
-                        .size(90.dp)
-                        .padding(bottom = 16.dp)
+                        .size(76.dp)
                 )
 
                 // Title
-                Text(
-                    text = "Make money when your friends trade",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    textAlign = TextAlign.Center
-                )
+                Column(
+                    modifier = Modifier.padding(vertical = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Make money when your",
+                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp)
+                    )
+                    Text(
+                        text = "friends trade",
+                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(16.dp))
 
                 // Stats Row
                 Row(
@@ -75,36 +85,43 @@ fun RewardScreen(onItemSelected: (Int) -> Unit) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "Lifetime rewards",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.labelLarge
                         )
                         Text(
                             text = "$0.00",
-                            style = MaterialTheme.typography.titleLarge,
+                            style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
                         )
                     }
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "Friends referred",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.labelLarge
                         )
                         Text(
                             text = "0",
-                            style = MaterialTheme.typography.titleLarge,
+                            style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                CustomizedButton("Invite",16,R.drawable.share) { }
+                CustomizedButton("Invite", 16, R.drawable.share) { }
 
                 Text(
-                    text = "*Earn 50% of all trading fees from each friend you refer.",
+                    text = buildAnnotatedString {
+                        append("*Earn ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("50%")
+                        }
+                        append(" of all trading fees from each friend you refer.")
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
+
             }
         }
     }

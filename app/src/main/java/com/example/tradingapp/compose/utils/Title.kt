@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.tradingapp.ui.theme.TradingAppTheme
 
 @Composable
@@ -46,8 +47,7 @@ fun Title(title: String, onBackPress: () -> Unit) {
             Box(modifier = Modifier.align(Alignment.Center)) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
                     modifier = Modifier.align(Alignment.Center)
                 )
             }

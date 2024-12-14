@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.home.ListSection
-import com.example.tradingapp.compose.home.TopBar
+import com.example.tradingapp.compose.utils.TopBar
 
 @Composable
 fun SearchScreen() {
@@ -219,4 +219,9 @@ private fun TopMarketCaps() {
 
         ListSection(6)
     }
+}
+
+@Composable
+private fun PreviewSearchScreen(){
+    SearchScreen()
 }
