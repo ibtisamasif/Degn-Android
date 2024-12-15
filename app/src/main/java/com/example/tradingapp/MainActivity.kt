@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        initializeMoonPaySDK()
+        initializeMoonPaySDK()
         enableEdgeToEdge()
         setContent {
             TradingAppTheme {
@@ -45,9 +45,11 @@ class MainActivity : AppCompatActivity() {
             onUnsupportedRegion = { Log.i("HANDLER CALLED", "onUnsupportedRegion called!") }
         )
 
-        val params = MoonPayBuyQueryParams("pk_test_123").apply {
+        val params = MoonPayBuyQueryParams(apiKey = "pk_test_qXXVG9uQ3dRhOV386Y7xKiCg1nzgQd1K").apply {
             setCurrencyCode("SOL")
+            setEmail("ibtisam283@gmail.com")
         }
+
 
         val config = MoonPaySdkBuyConfig(
             environment = MoonPayWidgetEnvironment.Sandbox,
