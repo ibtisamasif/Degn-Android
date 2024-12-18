@@ -11,9 +11,9 @@ import com.example.tradingapp.compose.BottomNavigationBar
 import com.example.tradingapp.compose.utils.Title
 
 @Composable
-fun ActivityScreen() {
+fun ActivityScreen(onBackPress:()->Unit) {
     Scaffold(
-        topBar = { Title(title = "Activity") { } },
+        topBar = { Title(title = "Activity") { onBackPress.invoke()} },
         bottomBar = { BottomNavigationBar(0) {} }
     ) { paddingValues ->
         Column(
@@ -22,7 +22,7 @@ fun ActivityScreen() {
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            ListSection(2)
+            ListSection(2){}
         }
     }
 }

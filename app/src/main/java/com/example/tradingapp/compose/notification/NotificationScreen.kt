@@ -15,11 +15,12 @@ import com.example.tradingapp.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.tradingapp.compose.utils.CustomizedButton
 import com.example.tradingapp.compose.utils.Title
 
 @Composable
-fun NotificationScreen(){
+fun NotificationScreen(onBackPress:()->Unit){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -28,10 +29,10 @@ fun NotificationScreen(){
             .padding(start = 16.dp)
     ) {
         Spacer(modifier = Modifier.height(32.dp))
-        Title("Notifications") {}
-        Spacer(modifier = Modifier.height(16.dp))
+        Title("Notifications") {onBackPress.invoke()}
+        Spacer(modifier = Modifier.height(32.dp))
         TitleAndDescription("Push Notification","Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tristique vehicula purus.")
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         CustomizedButton("Enable in Setting",64,R.drawable.bell_icon){}
     }
@@ -42,11 +43,12 @@ fun TitleAndDescription(title: String, description: String){
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp)
         )
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = description,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.labelMedium
         )
     }
 }

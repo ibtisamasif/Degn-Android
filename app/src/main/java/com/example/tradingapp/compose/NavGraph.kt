@@ -9,6 +9,7 @@ import com.example.tradingapp.MainActivity
 import com.example.tradingapp.compose.authentication.EmailScreen
 import com.example.tradingapp.compose.export.ExportKeysScreen
 import com.example.tradingapp.compose.home.ActivityScreen
+import com.example.tradingapp.compose.home.CoinDetailScreen
 import com.example.tradingapp.compose.home.HomeScreen
 import com.example.tradingapp.compose.notification.NotificationScreen
 import com.example.tradingapp.compose.profile.ProfileScreen
@@ -39,61 +40,39 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager)
 
         composable(route = Screens.EmailScreen.route) {
             EmailScreen(true, promptManager) {
-                navController.navigate(Screens.OTPScreen.route)
+                if(it=="Back") navController.navigateUp()
+                else navController.navigate(Screens.OTPScreen.route)
             }
         }
 
         composable(route = Screens.OTPScreen.route) {
             EmailScreen(false, promptManager) {
-                navController.navigate(Screens.HomeScreen.route)
+                if(it=="Back") navController.navigateUp()
+                else navController.navigate(Screens.HomeScreen.route)
             }
         }
 
         composable(route = Screens.HomeScreen.route) {
             HomeScreen(true) {
-                when (it) {
-                    1 -> navController.navigate(Screens.TrendingScreen.route)
-                    2 -> navController.navigate(Screens.RewardScreen.route)
-                    3 -> navController.navigate(Screens.WalletScreen.route)
-                    4 -> navController.navigate(Screens.SettingScreen.route)
-                    5 -> navController.navigate(Screens.ActivityScreen.route)
-                }
+              navController.navigate(it)
             }
         }
 
         composable(route = Screens.TrendingScreen.route) {
             HomeScreen(false) {
-                when (it) {
-                    0 -> navController.navigate(Screens.HomeScreen.route)
-                    2 -> navController.navigate(Screens.RewardScreen.route)
-                    3 -> navController.navigate(Screens.WalletScreen.route)
-                    4 -> navController.navigate(Screens.SettingScreen.route)
-                    5 -> navController.navigate(Screens.ActivityScreen.route)
-                }
+                navController.navigate(it)
             }
         }
 
         composable(route = Screens.RewardScreen.route) {
             RewardScreen {
-                when (it) {
-                    0 -> navController.navigate(Screens.HomeScreen.route)
-                    1 -> navController.navigate(Screens.TrendingScreen.route)
-                    3 -> navController.navigate(Screens.WalletScreen.route)
-                    4 -> navController.navigate(Screens.SettingScreen.route)
-                    5 -> navController.navigate(Screens.ActivityScreen.route)
-                }
+                navController.navigate(it)
             }
         }
 
         composable(route = Screens.WalletScreen.route) {
             WalletScreen {
-                when (it) {
-                    0 -> navController.navigate(Screens.HomeScreen.route)
-                    1 -> navController.navigate(Screens.TrendingScreen.route)
-                    2 -> navController.navigate(Screens.RewardScreen.route)
-                    4 -> navController.navigate(Screens.SettingScreen.route)
-                    5 -> navController.navigate(Screens.ActivityScreen.route)
-                }
+                navController.navigate(it)
             }
         }
 
@@ -104,28 +83,45 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager)
                     "Export Keys"-> navController.navigate(Screens.ExportScreen.route)
                     "Legal & Privacy"-> navController.navigate(Screens.LegalScreen.route)
                     "Profile"-> navController.navigate(Screens.ProfileScreen.route)
+                    "Back" -> navController.navigateUp()
                 }
             }
         }
 
         composable(route = Screens.LegalScreen.route) {
-            LegalAndPrivacy()
+            LegalAndPrivacy{
+                navController.navigateUp()
+            }
         }
 
         composable(route = Screens.ExportScreen.route) {
-            ExportKeysScreen()
+            ExportKeysScreen{
+                navController.navigateUp()
+            }
         }
 
         composable(route = Screens.NotificationScreen.route) {
-            NotificationScreen()
+            NotificationScreen{
+                navController.navigateUp()
+            }
         }
 
         composable(route = Screens.ProfileScreen.route) {
-            ProfileScreen()
+            ProfileScreen{
+                navController.navigateUp()
+            }
         }
 
         composable(route = Screens.ActivityScreen.route) {
-            ActivityScreen()
+            ActivityScreen{
+                navController.navigateUp()
+            }
+        }
+
+        composable(route = Screens.CoinDetailScreen.route) {
+            CoinDetailScreen{
+                navController.navigateUp()
+            }
         }
     }
 }

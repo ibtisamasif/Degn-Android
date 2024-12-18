@@ -14,10 +14,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,26 +24,21 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -61,34 +52,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
-import com.example.tradingapp.compose.account.GainsScreen
-import com.example.tradingapp.compose.support.SupportScreen
-import com.example.tradingapp.ui.theme.Green
 import com.example.tradingapp.ui.theme.Grey
 import com.example.tradingapp.ui.theme.Purple
 import kotlin.math.roundToInt
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BottomSheet(screenName: String, onCloseBottomSheet: (Boolean) -> Unit) {
-    val bottomSheetState =
-        rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val coroutineScope = rememberCoroutineScope()
-
-    ModalBottomSheet(
-        sheetState = bottomSheetState,
-        onDismissRequest = {onCloseBottomSheet.invoke(false)},
-        containerColor = Color.White
-    ) {
-        when (screenName) {
-            "Gain" -> GainsScreen{onCloseBottomSheet.invoke(!it)}
-            "Send" -> PaymentScreen{}
-            "Withdraw" -> PaymentScreen{}
-            "Deposit" -> PaymentScreen{}
-            "Support" -> SupportScreen {onCloseBottomSheet.invoke(!it)}
-        }
-    }
-}
 
 @Composable
 fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
@@ -102,11 +68,15 @@ fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(top = 16.dp)
         ) {
-            Box(modifier = Modifier.weight(0.5f)) {}
+            Box(
+                modifier = Modifier
+                    .weight(.25f)
+                    .align(Alignment.CenterVertically)
+            ) {}
             Text(
                 "Send",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.weight(0.5f)
+                modifier = Modifier.weight(.75f),
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
             )
             Image(
                 painter = painterResource(R.drawable.close),
@@ -188,7 +158,13 @@ fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
         NumericKeypad(onKeyPress = { /* Handle key press */ })
 
         Spacer(modifier = Modifier.weight(0.3f))
-        Row(modifier = Modifier.weight(0.8f).padding(16.dp),horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .weight(0.8f)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             ConfirmationButton()
         }
 

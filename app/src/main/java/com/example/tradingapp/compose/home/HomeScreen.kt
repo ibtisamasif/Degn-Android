@@ -3,6 +3,7 @@ package com.example.tradingapp.compose.home
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,22 +39,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.BottomNavigationBar
+import com.example.tradingapp.compose.utils.BottomSheet
 import com.example.tradingapp.compose.utils.TopBar
+import com.example.tradingapp.data.Screens
 import com.example.tradingapp.ui.theme.Green
 import com.example.tradingapp.ui.theme.Red
 import com.example.tradingapp.ui.theme.TradingAppTheme
 import com.example.tradingapp.ui.theme.gradient
 
 @Composable
-fun HomeScreen(isHome: Boolean, onItemSelected: (Int) -> Unit) {
+fun HomeScreen(isHome: Boolean, onItemSelected: (String) -> Unit) {
+    var isShowSheet by remember { mutableStateOf(false) }
     TradingAppTheme {
         Scaffold(
             topBar = {
                 Box(
                     modifier = Modifier
-                        .padding(top = 32.dp)
+                        .padding(top = 45.dp)
                 ) {
-                    TopBar { onItemSelected.invoke(it) }
+                    TopBar {
+                        if (it == "Search") isShowSheet = true
+                        else onItemSelected.invoke(it)
+                    }
                 }
             },
             bottomBar = {
@@ -74,9 +85,14 @@ fun HomeScreen(isHome: Boolean, onItemSelected: (Int) -> Unit) {
                         .fillMaxWidth()
                         .padding(bottom = paddingValues.calculateBottomPadding())
                 ) {
-                    ListSection(10)
+                    ListSection(10) {
+                        onItemSelected.invoke(Screens.CoinDetailScreen.route)
+                    }
                 }
             }
+        }
+        if (isShowSheet) BottomSheet("Search") {
+            isShowSheet = it
         }
     }
 
@@ -140,7 +156,12 @@ fun SpotlightSection() {
                         )
                         .align(Alignment.CenterVertically)
                 )
-                Text("Live", color = Green, style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(start = 8.dp))
+                Text(
+                    "Live",
+                    color = Green,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -177,7 +198,7 @@ fun SpotlightSection() {
 }
 
 @Composable
-fun ListSection(count: Int) {
+fun ListSection(count: Int, onItemSelected: () -> Unit) {
     LazyColumn {
         items(count) { index ->
             ListItem(
@@ -185,18 +206,27 @@ fun ListSection(count: Int) {
                 name = if (index % 3 == 0) "Chill Doge" else if (index % 3 == 1) "Dino" else "Bonk",
                 price = "$0.22",
                 marketCap = "$219M MKT CAP",
-                isPositive = index % 2 == 0
+                isPositive = index % 2 == 0,
+                onItemSelected = onItemSelected
             )
         }
     }
 }
 
 @Composable
-fun ListItem(image: Int, name: String, price: String, marketCap: String, isPositive: Boolean) {
+fun ListItem(
+    image: Int,
+    name: String,
+    price: String,
+    marketCap: String,
+    isPositive: Boolean,
+    onItemSelected: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { onItemSelected.invoke() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(

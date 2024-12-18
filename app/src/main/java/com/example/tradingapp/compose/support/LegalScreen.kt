@@ -34,11 +34,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tradingapp.R
 import com.example.tradingapp.compose.setting.SettingItem
 import com.example.tradingapp.compose.utils.Title
 
 @Composable
-fun LegalAndPrivacy(){
+fun LegalAndPrivacy(onBackPress:(String)->Unit){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,13 +48,13 @@ fun LegalAndPrivacy(){
     ) {
 
         Spacer(modifier = Modifier.height(32.dp))
-        Title(title = "Legal & Privacy"){}
+        Title(title = "Legal & Privacy"){onBackPress.invoke("Back")}
         Spacer(modifier = Modifier.height(24.dp))
 
         val settingsItems = listOf(
-            Pair(Icons.Default.DateRange, "Term of Service"),
-            Pair(Icons.Default.Info, "Privacy Policy"),
-            Pair(Icons.Default.Delete, "Delete Account"),
+            Pair(R.drawable.legal, "Term of Service"),
+            Pair(R.drawable.lock, "Privacy Policy"),
+            Pair(R.drawable.delete, "Delete Account"),
         )
 
         settingsItems.forEach { item ->

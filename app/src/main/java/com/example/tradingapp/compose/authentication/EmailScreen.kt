@@ -58,7 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonClick: ()-> Unit) {
+fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonClick: (String)-> Unit) {
     TradingAppTheme {
         Column(
             modifier = Modifier
@@ -69,24 +69,25 @@ fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonC
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Title(title = "") {}
+                Title(title = "") {
+                    onButtonClick.invoke("Back")
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = if (isEmail) "Enter your email" else "Verify your email",
-                style = MaterialTheme.typography.headlineLarge
+                text = if (isEmail) "ENTER YOUR EMAIL" else "VERIFY YOUR EMAIL",
+                style = MaterialTheme.typography.headlineMedium
             )
 
             Text(
                 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tristique vehicula purus.",
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp)
+                modifier = Modifier.padding(vertical = 16.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -98,7 +99,7 @@ fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonC
                 verticalAlignment = Alignment.Bottom,
                 modifier = Modifier.weight(1f).padding(16.dp)
             ) {
-                CustomizedButton("Next", 64,null, onButtonClick = {onButtonClick()})
+                CustomizedButton("Next", 64,null, onButtonClick = {onButtonClick.invoke("Button")})
             }
         }
     }
@@ -106,7 +107,7 @@ fun EmailScreen(isEmail: Boolean,promptManager: BiometricPromptManager,onButtonC
     val biometricResult by promptManager.promptResults.collectAsState(initial = null)
     val enrollLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = { onButtonClick() }
+        onResult = { onButtonClick.invoke("Button") }
     )
     val count = remember { mutableIntStateOf(0) }
 

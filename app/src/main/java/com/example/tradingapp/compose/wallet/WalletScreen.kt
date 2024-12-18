@@ -37,21 +37,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.BottomNavigationBar
-import com.example.tradingapp.compose.payment.BottomSheet
+import com.example.tradingapp.compose.utils.BottomSheet
 import com.example.tradingapp.compose.utils.TopBar
 import com.example.tradingapp.ui.theme.Purple
 import com.example.tradingapp.ui.theme.TradingAppTheme
 
 @Composable
-fun WalletScreen(onItemSelected: (Int) -> Unit) {
+fun WalletScreen(onItemSelected: (String) -> Unit) {
+    var isShowSheet by remember { mutableStateOf(false) }
     TradingAppTheme {
         Scaffold(
             topBar = {
                 Box(
                     modifier = Modifier
-                        .padding(top = 32.dp)
+                        .padding(top = 45.dp)
                 ) {
-                    TopBar { onItemSelected.invoke(it) }
+                    TopBar {
+                        if(it=="Search") isShowSheet = true
+                        else onItemSelected.invoke(it)
+                    }
                 }
             },
             bottomBar = { BottomNavigationBar(3) { onItemSelected.invoke(it) } }
@@ -218,6 +222,9 @@ fun WalletScreen(onItemSelected: (Int) -> Unit) {
                     }
                 }
             }
+        }
+        if (isShowSheet) BottomSheet("Search"){
+            isShowSheet = it
         }
     }
 }

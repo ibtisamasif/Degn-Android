@@ -13,6 +13,8 @@ import com.moonpay.sdk.MoonPayBuyQueryParams
 import com.moonpay.sdk.MoonPayHandlers
 import com.moonpay.sdk.MoonPayRenderingOptionAndroid
 import com.moonpay.sdk.MoonPaySdkBuyConfig
+import com.moonpay.sdk.MoonPaySdkSellConfig
+import com.moonpay.sdk.MoonPaySellQueryParams
 import com.moonpay.sdk.MoonPayWidgetEnvironment
 import com.moonpay.sdk.OnInitiateDepositResponsePayload
 
@@ -23,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initializeMoonPaySDK()
+//        initializeMoonPaySDK()
         enableEdgeToEdge()
         setContent {
             TradingAppTheme {
@@ -33,6 +35,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeMoonPaySDK() {
+
+        //
+//        val params = MoonPayBuyQueryParams(apiKey = "pk_test_qXXVG9uQ3dRhOV386Y7xKiCg1nzgQd1K").apply {
+//            setCurrencyCode("SOL")
+//            setEmail("ibtisam283@gmail.com")
+//        }
+//
+//
+//        val config = MoonPaySdkBuyConfig(
+//            environment = MoonPayWidgetEnvironment.Sandbox,
+//            debug = true,
+//            params = params,
+//            handlers = handlers
+//        )
+//
+//        val moonPaySdk = MoonPayAndroidSdk(config = config, activity = this)
+//
+//        moonPaySdk.show(MoonPayRenderingOptionAndroid.WebViewOverlay)
+
+
         val handlers = MoonPayHandlers(
             onSwapsCustomerSetupComplete = { Log.i("HANDLER CALLED", "onSwapsCustomerSetupComplete called!") },
             onAuthToken = { Log.i("HANDLER CALLED", "onAuthToken called with payload $it") },
@@ -45,19 +67,20 @@ class MainActivity : AppCompatActivity() {
             onUnsupportedRegion = { Log.i("HANDLER CALLED", "onUnsupportedRegion called!") }
         )
 
-        val params = MoonPayBuyQueryParams(apiKey = "pk_test_qXXVG9uQ3dRhOV386Y7xKiCg1nzgQd1K").apply {
-            setCurrencyCode("SOL")
-            setEmail("ibtisam283@gmail.com")
-        }
+        val params = MoonPayBuyQueryParams("pk_test_qXXVG9uQ3dRhOV386Y7xKiCg1nzgQd1K")
+        params.setCurrencyCode("ETH")
 
+        val sellParams = MoonPaySellQueryParams("pk_test_qXXVG9uQ3dRhOV386Y7xKiCg1nzgQd1K")
+        sellParams.setCurrencyCode("ETH")
 
-        val config = MoonPaySdkBuyConfig(
+        val config = MoonPaySdkSellConfig(
             environment = MoonPayWidgetEnvironment.Sandbox,
             debug = true,
-            params = params,
+            params = sellParams,
             handlers = handlers
         )
 
+        // Initialize the SDK using 'this' reference for MainActivity
         val moonPaySdk = MoonPayAndroidSdk(config = config, activity = this)
 
         moonPaySdk.show(MoonPayRenderingOptionAndroid.WebViewOverlay)

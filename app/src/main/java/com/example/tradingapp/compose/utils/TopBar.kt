@@ -1,6 +1,7 @@
 package com.example.tradingapp.compose.utils
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -33,10 +34,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
+import com.example.tradingapp.data.Screens
 
 @Composable
-fun TopBar(onSettingClicked: (Int) -> Unit) {
-    var search by remember { mutableStateOf("") }
+fun TopBar(onSettingClicked: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -51,79 +52,19 @@ fun TopBar(onSettingClicked: (Int) -> Unit) {
             modifier = Modifier
                 .padding(start = 16.dp)
                 .size(20.dp)
-                .clickable { onSettingClicked.invoke(5) }
+                .clickable { onSettingClicked.invoke(Screens.ActivityScreen.route) }
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .height(43.dp)
-                .padding(horizontal = 16.dp)
-                .drawBehind {
-                    val borderWidth = 1.dp.toPx()
-                    val cornerRadius = 24.dp.toPx()
-                    drawRoundRect(
-                        color = Color.Black,
-                        size = size.copy(
-                            width = size.width - borderWidth,
-                            height = size.height - borderWidth
-                        ),
-                        cornerRadius = CornerRadius(cornerRadius, cornerRadius),
-                        style = Stroke(width = borderWidth)
-                    )
-                },
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search Icon",
-                    modifier = Modifier.size(18.dp),
-                    tint = Color.Black
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                BasicTextField(
-                    value = search,
-                    onValueChange = { search = it },
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.labelLarge.copy(
-                        fontSize = 14.5.sp,
-                        color = Color.Black,
-                        textAlign = TextAlign.Start
-                    ),
-                    decorationBox = { innerTextField ->
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            // Placeholder
-                            if (search.isEmpty()) {
-                                Text(
-                                    text = "Search",
-                                    style = MaterialTheme.typography.labelSmall.copy(
-                                        fontSize = 14.5.sp,
-                                        color = Color.Gray
-                                    )
-                                )
-                            }
-                            innerTextField()
-                        }
-                    }
-                )
-            }
-        }
+        SearchField(
+            onClick = {onSettingClicked.invoke("Search")}
+        )
 
         Icon(
             Icons.Default.Settings,
             contentDescription = "Settings Icon",
             modifier = Modifier
                 .padding(end = 16.dp)
-                .clickable { onSettingClicked.invoke(4) }
+                .clickable { onSettingClicked.invoke(Screens.SettingScreen.route) }
         )
     }
 }

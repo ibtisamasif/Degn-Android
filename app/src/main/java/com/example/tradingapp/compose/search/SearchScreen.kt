@@ -3,6 +3,7 @@ package com.example.tradingapp.compose.search
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,17 +32,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.home.ListSection
+import com.example.tradingapp.compose.utils.SearchField
 import com.example.tradingapp.compose.utils.TopBar
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(onCloseBottomSheet: (Boolean) -> Unit) {
     Scaffold(
         topBar = {
-            Box(
-                modifier = Modifier
-                    .padding(top = 32.dp)
-            ) {
-                TopBar{}
+                Box(modifier = Modifier.padding(start = 60.dp)) {
+                    SearchField(
+                        editable = true
+                    )
+                }
+            Box(modifier = Modifier.padding(start = 12.dp)) {
+                Image(
+                    painter = painterResource(R.drawable.close),
+                    contentDescription = "Close",
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .size(36.dp)
+                        .clickable {
+                            onCloseBottomSheet.invoke(true)
+                        }
+                )
             }
         },
     ) { paddingValues ->
@@ -217,11 +234,6 @@ private fun TopMarketCaps() {
             fontWeight = FontWeight.SemiBold
         )
 
-        ListSection(6)
+        ListSection(6){}
     }
-}
-
-@Composable
-private fun PreviewSearchScreen(){
-    SearchScreen()
 }

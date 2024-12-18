@@ -1,5 +1,6 @@
 package com.example.tradingapp.compose.setting
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,15 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.sharp.ExitToApp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,17 +29,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.tradingapp.compose.payment.BottomSheet
+import com.example.tradingapp.R
+import com.example.tradingapp.compose.utils.BottomSheet
 import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.OffWhite
 import com.example.tradingapp.ui.theme.Sky
 
 @Composable
-fun SettingsScreen(onMenuCLicked: (String)-> Unit) {
+fun SettingsScreen(onMenuCLicked: (String) -> Unit) {
     var isShowSheet by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -55,7 +50,7 @@ fun SettingsScreen(onMenuCLicked: (String)-> Unit) {
     ) {
 
         Spacer(modifier = Modifier.height(32.dp))
-        Title(title = "Setting"){}
+        Title(title = "Setting") {onMenuCLicked.invoke("Back")}
         Spacer(modifier = Modifier.height(16.dp))
 
         // Profile Section
@@ -77,7 +72,11 @@ fun SettingsScreen(onMenuCLicked: (String)-> Unit) {
             )
             Column {
                 Text(text = "@yourusername123", fontWeight = FontWeight.Bold)
-                Text(text = "youremailaddress@gmail.com", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    text = "youremailaddress@gmail.com",
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
             Spacer(modifier = Modifier.weight(1f))
             Icon(
@@ -90,17 +89,17 @@ fun SettingsScreen(onMenuCLicked: (String)-> Unit) {
 
         // Settings Options
         val settingsItems = listOf(
-            Pair(Icons.Default.Notifications, "Notifications"),
-            Pair(Icons.Default.Send, "Export Keys"),
-            Pair(Icons.Default.Star, "Rate us"),
-            Pair(Icons.Default.AddCircle, "Legal & Privacy"),
-            Pair(Icons.Default.Done, "Support"),
-            Pair(Icons.Sharp.ExitToApp, "Log out")
+            Pair(R.drawable.notification, "Notifications"),
+            Pair(R.drawable.lock, "Export Keys"),
+            Pair(R.drawable.star, "Rate us"),
+            Pair(R.drawable.legal, "Legal & Privacy"),
+            Pair(R.drawable.support, "Support"),
+            Pair(R.drawable.logout, "Log out")
         )
 
         settingsItems.forEach { item ->
-            SettingItem(icon = item.first, title = item.second){item->
-                if(item == "Support") isShowSheet = true
+            SettingItem(icon = item.first, title = item.second) { item ->
+                if (item == "Support") isShowSheet = true
                 else onMenuCLicked.invoke(item)
             }
         }
@@ -116,24 +115,37 @@ fun SettingsScreen(onMenuCLicked: (String)-> Unit) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(imageVector = Icons.Default.Notifications, contentDescription = "Website")
-                Icon(
-                    imageVector = Icons.Default.Send,
-                    contentDescription = "Contact Us"
+                Image(
+                    painter = painterResource(id = R.drawable.ic_world),
+                    contentDescription = "Website",
+                    modifier = Modifier.size(32.dp)
                 )
-                Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
+                Image(
+                    painter = painterResource(id = R.drawable.ic_send),
+                    contentDescription = "Contact Us", modifier = Modifier.size(32.dp)
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.ic_twitter),
+                    contentDescription = "Close",
+                    modifier = Modifier.size(32.dp)
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "v1.5", color = Color.Gray, fontSize = 12.sp)
         }
-        if (isShowSheet) BottomSheet("Support"){
+        if (isShowSheet) BottomSheet("Support") {
             isShowSheet = it
         }
     }
 }
 
 @Composable
-fun SettingItem(icon: ImageVector, title: String, color: Color = Color.Black,onMenuCLicked: (String)-> Unit) {
+fun SettingItem(
+    icon: Int,
+    title: String,
+    color: Color = Color.Black,
+    onMenuCLicked: (String) -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -142,7 +154,7 @@ fun SettingItem(icon: ImageVector, title: String, color: Color = Color.Black,onM
             .clickable { onMenuCLicked.invoke(title) }
     ) {
         Icon(
-            imageVector = icon,
+            painter = painterResource(id = icon),
             contentDescription = title,
             modifier = Modifier.size(24.dp),
             tint = color

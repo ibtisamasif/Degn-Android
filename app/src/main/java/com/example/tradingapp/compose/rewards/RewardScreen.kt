@@ -15,6 +15,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,12 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.BottomNavigationBar
+import com.example.tradingapp.compose.utils.BottomSheet
 import com.example.tradingapp.compose.utils.CustomizedButton
 import com.example.tradingapp.compose.utils.TopBar
 import com.example.tradingapp.ui.theme.TradingAppTheme
 
 @Composable
-fun RewardScreen(onItemSelected: (Int) -> Unit) {
+fun RewardScreen(onItemSelected: (String) -> Unit) {
+    var isShowSheet by remember { mutableStateOf(false) }
     TradingAppTheme {
         Scaffold(
             topBar = {
@@ -41,7 +47,10 @@ fun RewardScreen(onItemSelected: (Int) -> Unit) {
                     modifier = Modifier
                         .padding(top = 45.dp)
                 ) {
-                    TopBar { onItemSelected.invoke(it) }
+                    TopBar {
+                        if (it == "Search") isShowSheet = true
+                        else onItemSelected.invoke(it)
+                    }
                 }
             },
             bottomBar = { BottomNavigationBar(2) { onItemSelected.invoke(it) } }
@@ -123,6 +132,9 @@ fun RewardScreen(onItemSelected: (Int) -> Unit) {
                 )
 
             }
+        }
+        if (isShowSheet) BottomSheet("Search") {
+            isShowSheet = it
         }
     }
 }

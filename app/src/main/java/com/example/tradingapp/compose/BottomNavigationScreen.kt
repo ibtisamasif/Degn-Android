@@ -1,6 +1,5 @@
 package com.example.tradingapp.compose
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -15,10 +14,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.tradingapp.R
+import com.example.tradingapp.data.Screens
 import com.example.tradingapp.ui.theme.Purple
 
 @Composable
-fun BottomNavigationBar(index: Int, onItemSelected: (Int) -> Unit) {
+fun BottomNavigationBar(index: Int, onItemSelected: (String) -> Unit) {
     val selectedIndex = remember { mutableIntStateOf(index) }
 
     NavigationBar(
@@ -33,11 +33,11 @@ fun BottomNavigationBar(index: Int, onItemSelected: (Int) -> Unit) {
                     tint = if (selectedIndex.intValue == 0) Purple else Color.Black
                 )
             },
-            label = { Text("Home",style = MaterialTheme.typography.labelSmall) },
+            label = { Text("Home", style = MaterialTheme.typography.labelSmall) },
             selected = selectedIndex.intValue == 0,
             onClick = {
                 selectedIndex.intValue = 0
-                onItemSelected.invoke(0)
+                onItemSelected.invoke(Screens.HomeScreen.route)
             },
         )
         NavigationBarItem(
@@ -49,11 +49,11 @@ fun BottomNavigationBar(index: Int, onItemSelected: (Int) -> Unit) {
                     tint = if (selectedIndex.intValue == 1) Purple else Color.Black
                 )
             },
-            label = { Text("Trending",style = MaterialTheme.typography.labelSmall) },
+            label = { Text("Trending", style = MaterialTheme.typography.labelSmall) },
             selected = selectedIndex.intValue == 1,
             onClick = {
                 selectedIndex.intValue = 1
-                onItemSelected.invoke(1)
+                onItemSelected.invoke(Screens.TrendingScreen.route)
             },
         )
         NavigationBarItem(
@@ -65,11 +65,11 @@ fun BottomNavigationBar(index: Int, onItemSelected: (Int) -> Unit) {
                     tint = if (selectedIndex.intValue == 2) Purple else Color.Black
                 )
             },
-            label = { Text("Rewards",style = MaterialTheme.typography.labelSmall) },
+            label = { Text("Rewards", style = MaterialTheme.typography.labelSmall) },
             selected = selectedIndex.intValue == 2,
             onClick = {
                 selectedIndex.intValue = 2
-                onItemSelected.invoke(2)
+                onItemSelected.invoke(Screens.RewardScreen.route)
             },
         )
         NavigationBarItem(
@@ -85,7 +85,7 @@ fun BottomNavigationBar(index: Int, onItemSelected: (Int) -> Unit) {
             selected = selectedIndex.intValue == 3,
             onClick = {
                 selectedIndex.intValue = 3
-                onItemSelected.invoke(3)
+                onItemSelected.invoke(Screens.WalletScreen.route)
             },
         )
     }

@@ -66,6 +66,8 @@ dependencies {
 
     implementation(libs.androidx.biometric.v110)
     implementation(libs.androidx.appcompat)
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     implementation(libs.moonpaysdk.android)
+
 }

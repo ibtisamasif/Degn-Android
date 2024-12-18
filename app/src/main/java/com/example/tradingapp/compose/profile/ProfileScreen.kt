@@ -29,7 +29,7 @@ import com.example.tradingapp.R
 import com.example.tradingapp.compose.utils.Title
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(onBackPress:()->Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -39,7 +39,7 @@ fun ProfileScreen() {
     ) {
 
         Spacer(modifier = Modifier.height(32.dp))
-        Title(title = "Profile") {}
+        Title(title = "Profile") {onBackPress.invoke()}
         Spacer(modifier = Modifier.height(24.dp))
 
         // Profile Picture
