@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.utils.CustomizedButton
+import com.example.tradingapp.compose.utils.Title
 
 @SuppressLint("InvalidColorHexValue")
 @Composable
@@ -38,16 +39,9 @@ fun GainsScreen(onCloseBottomSheet: (Boolean) -> Unit) {
             .fillMaxHeight(0.99f)
             .background(Color.White)
     ) {
-        // Close button
-        Image(
-            painter = painterResource(id = R.drawable.close), // replace with your close button image resource
-            contentDescription = "Close",
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(horizontal = 16.dp)
-                .size(36.dp)
-                .clickable { onCloseBottomSheet.invoke(true) }
-        )
+        Title(title = "", isBottomSheet = true) {
+            onCloseBottomSheet.invoke(true)
+        }
 
         Box(
             modifier = Modifier

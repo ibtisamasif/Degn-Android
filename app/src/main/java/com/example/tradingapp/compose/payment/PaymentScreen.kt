@@ -1,60 +1,49 @@
 package com.example.tradingapp.compose.payment
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
-import com.example.tradingapp.ui.theme.Grey
+import com.example.tradingapp.compose.utils.ConfirmationButton
+import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.Purple
-import kotlin.math.roundToInt
 
 @Composable
 fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
@@ -62,35 +51,12 @@ fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(.25f)
-                    .align(Alignment.CenterVertically)
-            ) {}
-            Text(
-                "Send",
-                modifier = Modifier.weight(.75f),
-                style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
-            )
-            Image(
-                painter = painterResource(R.drawable.close),
-                contentDescription = "Close",
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .size(36.dp)
-                    .clickable { onCloseBottomSheet.invoke(true) }
-            )
+        Title(title = "Send", isBottomSheet = true) {
+            onCloseBottomSheet.invoke(true)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Balance and Input Amount
         Column(
             modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -99,19 +65,26 @@ fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
                     .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
                     .padding(1.dp)
             ) {
-                Box(
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .background(
-                            color = if (isSystemInDarkTheme()) Color(0xFF383838) else Color.Transparent,
-                            shape = RoundedCornerShape(12.dp)
+                            color = Color.Transparent,
+                            shape = RoundedCornerShape(21.5.dp)
                         )
                         .padding(horizontal = 16.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "Cash: $0.00",
-                        color = if (isSystemInDarkTheme()) Color.White else Color.Black,
-                        style = MaterialTheme.typography.bodyLarge
+                        text = "Cash:",
+                        style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp),
+                        modifier = Modifier.padding(end = 8.dp)
                     )
+                    Text(
+                        text = "$0.00",
+                        style = MaterialTheme.typography.labelMedium,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Icon(imageVector = Icons.Default.KeyboardArrowDown, contentDescription = "cash", modifier = Modifier.size(20.dp))
                 }
             }
 
@@ -126,26 +99,25 @@ fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
+                    .padding(horizontal = 64.dp, vertical = 16.dp)
             ) {
                 // List of labels for buttons
                 listOf("10%", "25%", "50%", "MAX").forEachIndexed { index, label ->
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(4.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .size(36.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .size(24.dp)
                             .background(if (selectedPercentage == label) Purple else Color.White)
                             .clickable { selectedPercentage = label }
                     ) {
                         Text(
                             text = label,
-                            fontSize = 12.sp,
+                            style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp),
                             color = if (selectedPercentage == label) Color.White else Color.Black,
                             modifier = Modifier
-                                .fillMaxSize() // Make Text take up all available space
-                                .wrapContentSize(align = Alignment.Center) // Center the text
+                                .fillMaxSize()
+                                .wrapContentSize(align = Alignment.Center)
                         )
                     }
                 }
@@ -178,11 +150,13 @@ fun NumericKeypad(onKeyPress: (String) -> Unit) {
     )
 
     Column(
-        modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxWidth().padding(top = 16.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         keys.forEach { row ->
             Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp, vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 row.forEach { key ->
                     Button(
@@ -193,15 +167,15 @@ fun NumericKeypad(onKeyPress: (String) -> Unit) {
                             containerColor = Color.White
                         ),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
-                        modifier = Modifier.size(68.dp)
+                        modifier = Modifier.size( 68.dp)
                     ) {
                         if (key !== "") {
-                            Text(text = key, fontSize = 36.sp)
+                            Text(text = key, style = MaterialTheme.typography.titleLarge)
                         } else {
-                            Icon(
-                                imageVector = Icons.Default.Close,
+                            Image(
+                                painter = painterResource(id = R.drawable.clear),
                                 contentDescription = "Clear",
-                                modifier = Modifier.size(36.dp)
+                                modifier = Modifier.size(48.dp)
                             )
                         }
                     }
@@ -211,100 +185,3 @@ fun NumericKeypad(onKeyPress: (String) -> Unit) {
     }
 }
 
-
-@Composable
-fun ConfirmationButton(modifier: Modifier = Modifier) {
-    val width = 350.dp
-    val dragSize = 50.dp
-    val cornerRadius = 18.dp
-    val maxDragPx = with(LocalDensity.current) { (width - dragSize).toPx() }
-    val dragOffset = remember { mutableStateOf(0f) }
-    val progress = dragOffset.value / maxDragPx
-    val isConfirmed = remember { derivedStateOf { progress >= 0.8f } }
-
-    Box(
-        modifier = modifier
-            .width(width)
-            .height(dragSize)
-            .background(
-                color = Grey,
-                shape = RoundedCornerShape(cornerRadius)
-            ),
-    ) {
-        Column(
-            Modifier
-                .align(Alignment.Center)
-                .alpha(1f - progress),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Swipe to Start",
-                color = Color.White,
-                fontSize = 12.sp
-            )
-        }
-
-        // Draggable Control
-        DraggableControl(
-            modifier = Modifier
-                .offset {
-                    IntOffset(dragOffset.value.roundToInt(), 0)
-                }
-                .size(dragSize)
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(cornerRadius)
-                )
-                .draggable(
-                    orientation = Orientation.Horizontal,
-                    state = rememberDraggableState { delta ->
-                        dragOffset.value = (dragOffset.value + delta).coerceIn(0f, maxDragPx)
-                    },
-                    onDragStopped = {
-                        if (progress >= 0.8f) {
-                            dragOffset.value = maxDragPx
-                        } else {
-                            dragOffset.value = 0f
-                        }
-                    }
-                ),
-            progress = progress
-        )
-    }
-}
-
-@Composable
-private fun DraggableControl(
-    modifier: Modifier,
-    progress: Float
-) {
-    Box(
-        modifier = modifier
-            .shadow(
-                elevation = 2.dp,
-                shape = RoundedCornerShape(18.dp),
-                clip = false
-            )
-            .background(
-                color = Purple,
-                shape = RoundedCornerShape(18.dp)
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Crossfade(targetState = progress >= 0.8f, label = "") { isConfirmed ->
-            if (isConfirmed) {
-                Icon(
-                    imageVector = Icons.Filled.Done,
-                    contentDescription = "Confirm Icon",
-                    tint = Color.White
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.ArrowForward,
-                    contentDescription = "Forward Icon",
-                    tint = Color.White
-                )
-            }
-        }
-    }
-}

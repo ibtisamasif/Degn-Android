@@ -64,10 +64,28 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    //biometric
     implementation(libs.androidx.biometric.v110)
     implementation(libs.androidx.appcompat)
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
+    //pie chart
+    implementation(libs.mpandroidchart)
+
+    //koin
+    implementation("io.insert-koin:koin-android:4.0.1-RC1")
+    implementation("io.insert-koin:koin-androidx-navigation:4.0.1-RC1")
+    implementation("io.insert-koin:koin-androidx-compose:4.0.1-RC1")
+    testImplementation("io.insert-koin:koin-test-junit4:4.0.1-RC1")
+
+    //moonpay SDK
     implementation(libs.moonpaysdk.android)
 
+    //gson
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    //Retrofit
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 }

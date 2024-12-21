@@ -6,6 +6,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.example.tradingapp.compose.account.GainsScreen
+import com.example.tradingapp.compose.payment.CashMiniScreen
+import com.example.tradingapp.compose.payment.DepositMiniScreen
 import com.example.tradingapp.compose.payment.PaymentScreen
 import com.example.tradingapp.compose.search.SearchScreen
 import com.example.tradingapp.compose.support.SupportScreen
@@ -18,16 +20,18 @@ fun BottomSheet(screenName: String, onCloseBottomSheet: (Boolean) -> Unit) {
 
     ModalBottomSheet(
         sheetState = bottomSheetState,
-        onDismissRequest = {onCloseBottomSheet.invoke(false)},
+        onDismissRequest = { onCloseBottomSheet.invoke(false) },
         containerColor = Color.White
     ) {
         when (screenName) {
-            "Gain" -> GainsScreen{onCloseBottomSheet.invoke(!it)}
-            "Send" -> PaymentScreen{}
-            "Withdraw" -> PaymentScreen{}
-            "Deposit" -> PaymentScreen{}
-            "Support" -> SupportScreen {onCloseBottomSheet.invoke(!it)}
-            "Search" -> SearchScreen{onCloseBottomSheet.invoke(!it)}
+            "Gain" -> GainsScreen { onCloseBottomSheet.invoke(!it) }
+            "Send" -> PaymentScreen { onCloseBottomSheet.invoke(!it) }
+            "Withdraw" -> PaymentScreen { onCloseBottomSheet.invoke(!it) }
+            "Deposit" -> PaymentScreen { onCloseBottomSheet.invoke(!it) }
+            "Support" -> SupportScreen { onCloseBottomSheet.invoke(!it) }
+            "Search" -> SearchScreen { onCloseBottomSheet.invoke(!it) }
+            "CashMini" -> CashMiniScreen { onCloseBottomSheet.invoke(!it) }
+            "DepositMini" -> DepositMiniScreen()
         }
     }
 }

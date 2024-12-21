@@ -350,7 +350,7 @@ fun CoinDataSection() {
 @Composable
 fun BuyButton() {
     Button(
-        onClick = { /* Handle Buy Action */ },
+        onClick = {},
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .padding(bottom = 32.dp)
