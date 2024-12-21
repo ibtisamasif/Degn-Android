@@ -39,46 +39,51 @@ fun SliderScreen(onButtonCLicked: ()-> Unit){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(
-            verticalArrangement = Arrangement.Bottom,
-            modifier = Modifier.weight(0.7f)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Logo",
-                modifier = Modifier.size(220.dp)
-            )
-
-        }
         HorizontalPager(
-            state = pagerState, modifier = Modifier.weight(0.5f)
+            state = pagerState, modifier = Modifier.weight(1f)
         ) { page ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(vertical = 16.dp)
             ) {
-                Text(
-                    text = when (page) {
-                        0 -> "Welcome"
-                        1 -> "Learn and Explore"
-                        2 -> "Join Us Today"
-                        else -> ""
-                    }, style = MaterialTheme.typography.headlineLarge,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = when (page) {
-                        0 -> "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-                        1 -> "Discover features and tools that make your life easier."
-                        2 -> "Sign up now and be part of our growing community."
-                        else -> ""
-                    },
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
+                Column(
+                    modifier = Modifier.weight(0.8f),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "Logo",
+                        modifier = Modifier.size(220.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier.weight(0.3f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = when (page) {
+                            0 -> "Welcome"
+                            1 -> "Learn and Explore"
+                            2 -> "Join Us Today"
+                            else -> ""
+                        },
+                        style = MaterialTheme.typography.headlineLarge,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = when (page) {
+                            0 -> "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                            1 -> "Discover features and tools that make your life easier."
+                            2 -> "Sign up now and be part of our growing community."
+                            else -> ""
+                        },
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
+                }
             }
         }
 
@@ -106,7 +111,7 @@ fun SliderScreen(onButtonCLicked: ()-> Unit){
             }
 
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                CustomizedButton("Next", 64, null) {
+                CustomizedButton("Next", 0, null) {
                     onButtonCLicked.invoke()
                 }
             }

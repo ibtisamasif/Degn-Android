@@ -1,5 +1,6 @@
 package com.example.tradingapp.compose.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,9 +12,14 @@ import com.example.tradingapp.compose.BottomNavigationBar
 import com.example.tradingapp.compose.utils.Title
 
 @Composable
-fun ActivityScreen(onBackPress:()->Unit) {
+fun ActivityScreen(onBackPress: () -> Unit) {
     Scaffold(
-        topBar = { Title(title = "Activity") { onBackPress.invoke()} },
+        topBar = {
+            Box(
+                modifier = Modifier
+                    .padding(top = 45.dp)
+            ) { Title(title = "Activity") { onBackPress.invoke() } }
+        },
         bottomBar = { BottomNavigationBar(0) {} }
     ) { paddingValues ->
         Column(
@@ -22,7 +28,7 @@ fun ActivityScreen(onBackPress:()->Unit) {
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            ListSection(2){}
+            ListSection(2) {}
         }
     }
 }

@@ -88,7 +88,10 @@ import kotlin.math.roundToInt
 fun CoinDetailScreen(onBackPress: () -> Unit) {
     val scrollState = rememberScrollState()
     Scaffold(
-        topBar = { Title(title = "") { onBackPress.invoke() } },
+        topBar = { Box(
+            modifier = Modifier
+                .padding(top = 32.dp)
+        ){ Title(title = "") { onBackPress.invoke() } } },
     ) { paddingValues ->
         Column(
             modifier = Modifier

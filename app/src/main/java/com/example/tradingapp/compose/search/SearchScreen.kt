@@ -8,17 +8,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,23 +32,21 @@ import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.home.ListSection
 import com.example.tradingapp.compose.utils.SearchField
-import com.example.tradingapp.compose.utils.TopBar
 
 @Composable
 fun SearchScreen(onCloseBottomSheet: (Boolean) -> Unit) {
     Scaffold(
         topBar = {
-                Box(modifier = Modifier.padding(start = 60.dp)) {
-                    SearchField(
-                        editable = true
-                    )
-                }
-            Box(modifier = Modifier.padding(start = 12.dp)) {
+            Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, start = 36.dp)) {
+                SearchField(
+                    editable = true
+                )
                 Image(
                     painter = painterResource(R.drawable.close),
                     contentDescription = "Close",
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
+                        .align(Alignment.CenterEnd)
                         .size(36.dp)
                         .clickable {
                             onCloseBottomSheet.invoke(true)
@@ -194,6 +191,7 @@ private fun ExploreChip(
 ) {
     Row(
         modifier = Modifier
+            .width(110.dp)
             .border(
                 width = 1.dp,
                 color = if (isSelected) Color(0xFF6771EA) else Color(0xFF383838),
@@ -204,7 +202,8 @@ private fun ExploreChip(
                 RoundedCornerShape(22.dp)
             )
             .padding(horizontal = 12.dp, vertical = 9.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         Image(
             painter = painterResource(id = iconRes),
@@ -234,6 +233,6 @@ private fun TopMarketCaps() {
             fontWeight = FontWeight.SemiBold
         )
 
-        ListSection(6){}
+        ListSection(6) {}
     }
 }
