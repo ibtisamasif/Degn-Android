@@ -14,17 +14,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.tradingapp.R
 
@@ -42,7 +39,7 @@ fun SupportScreen(onCloseBottomSheet: (Boolean) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.99f)
+            .fillMaxHeight(0.97f)
             .background(Color.White, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .padding(16.dp)
     ) {
@@ -53,52 +50,47 @@ fun SupportScreen(onCloseBottomSheet: (Boolean) -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Absolute.Left
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.three_circles),
+                        contentDescription = null,
+                        modifier = Modifier.size(82.dp, 34.dp)
+                    )
+                }
                 Image(
-                    painter = painterResource(id = R.drawable.close), // replace with your close button image resource
+                    painter = painterResource(id = R.drawable.close),
                     contentDescription = "Close",
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 8.dp)
                         .size(36.dp)
                         .clickable { onCloseBottomSheet.invoke(true) }
                 )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Absolute.Left
-            ) {
-                repeat(3) {
-                    Box(
-                        modifier = Modifier
-                            .size(20.dp)
-                            .background(Color.Black, CircleShape)
-                            .padding(4.dp)
-                    )
-                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 text = "Hi yourusername123",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color.Gray
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
                 text = "How can we help?",
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Options
             val options = listOf(
-                Pair("Messages", Icons.Default.Email),
-                Pair("Help", Icons.Default.Call),
-                Pair("Send us a message", Icons.Default.Send),
-                Pair("Search for help", Icons.Default.Search)
+                Pair("Messages", R.drawable.message),
+                Pair("Help", R.drawable.support),
+                Pair("Send us a message", R.drawable.send_message),
+                Pair("Search for help", R.drawable.search)
             )
 
             options.forEach { option ->
@@ -110,25 +102,26 @@ fun SupportScreen(onCloseBottomSheet: (Boolean) -> Unit) {
 }
 
 @Composable
-fun OptionItem(title: String, icon: ImageVector) {
+fun OptionItem(title: String, icon: Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(8.dp))
-            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
+            .height(42.dp)
+            .background(Color.White, RoundedCornerShape(13.dp))
+            .border(1.dp, Color.Gray, RoundedCornerShape(13.dp))
             .padding(12.dp)
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.weight(1f)
+            style = MaterialTheme.typography.titleSmall.copy(textAlign = TextAlign.Start),
+            modifier = Modifier.weight(1f).padding(start = 8.dp)
         )
         Icon(
-            imageVector = icon,
+            painter = painterResource(id = icon),
             contentDescription = title,
-            tint = Color.Black
+            tint = Color.Black,
+            modifier = Modifier.padding(end = 8.dp)
         )
     }
 }

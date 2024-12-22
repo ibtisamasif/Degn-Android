@@ -18,6 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -84,8 +87,7 @@ fun OtpInputField(
     viewModel: AuthenticationViewModel,
     onOtpComplete: (String) -> Unit = {}
 ) {
-    val otp by viewModel.otp
-    val otpValues = otp.padEnd(otpLength, ' ').toList().map { it.toString() }
+    var otpValues by remember { mutableStateOf(List(otpLength) { "" }) }
     val focusRequesters = List(otpLength) { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val clipboardManager = LocalClipboardManager.current
@@ -93,6 +95,7 @@ fun OtpInputField(
     LaunchedEffect(Unit) {
         clipboardManager.getText()?.text?.let { clipboardText ->
             if (clipboardText.length == otpLength && clipboardText.all { it.isDigit() }) {
+                otpValues = clipboardText.map { it.toString() }
                 viewModel.otp.value = clipboardText
                 onOtpComplete(clipboardText)
             }
@@ -126,23 +129,52 @@ fun OtpInputField(
                 BasicTextField(
                     value = value,
                     onValueChange = { input ->
-                        if (input.length <= 1 && input.all { it.isDigit() }) {
-                            val updatedOtp = otpValues.toMutableList().apply {
-                                set(index, input)
-                            }.joinToString("")
-                            viewModel.otp.value = updatedOtp
+                        if (input.length > 1) {
+                            val digits = input.filter { it.isDigit() }
+                            if (digits.isNotEmpty()) {
+                                val newOtpValues = otpValues.toMutableList()
+                                for ((offset, char) in digits.withIndex()) {
+                                    val currentIndex = index + offset
+                                    if (currentIndex < otpLength) {
+                                        newOtpValues[currentIndex] = char.toString()
+                                    } else {
+                                        break
+                                    }
+                                }
+                                otpValues = newOtpValues
 
+                                val nextEmptyIndex = otpValues.indexOfFirst { it.isEmpty() }
+                                if (nextEmptyIndex != -1) {
+                                    focusRequesters[nextEmptyIndex].requestFocus()
+                                } else {
+                                    keyboardController?.hide()
+                                    val completeOtp = otpValues.joinToString("")
+                                    viewModel.otp.value = completeOtp
+                                    onOtpComplete(completeOtp)
+                                }
+                            }
+                        }
+                        else if (input.all { it.isDigit() }) {
+                            // Update the digit for this index
+                            otpValues = otpValues.toMutableList().apply {
+                                set(index, input)
+                            }
                             if (input.isEmpty()) {
                                 if (index > 0) {
                                     focusRequesters[index - 1].requestFocus()
                                 }
-                            } else if (index < otpLength - 1) {
-                                focusRequesters[index + 1].requestFocus()
+                            }
+                            else {
+                                if (index < otpLength - 1) {
+                                    focusRequesters[index + 1].requestFocus()
+                                }
                             }
 
-                            if (updatedOtp.trim().length == otpLength) {
+                            if (otpValues.all { it.isNotEmpty() }) {
                                 keyboardController?.hide()
-                                onOtpComplete(updatedOtp)
+                                val completeOtp = otpValues.joinToString("")
+                                viewModel.otp.value = completeOtp
+                                onOtpComplete(completeOtp)
                             }
                         }
                     },
@@ -165,7 +197,9 @@ fun OtpInputField(
                         onDone = {
                             keyboardController?.hide()
                             if (otpValues.all { it.isNotEmpty() }) {
-                                onOtpComplete(otpValues.joinToString(""))
+                                val completeOtp = otpValues.joinToString("")
+                                viewModel.otp.value = completeOtp
+                                onOtpComplete(completeOtp)
                             }
                         }
                     ),

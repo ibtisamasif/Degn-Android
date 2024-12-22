@@ -46,12 +46,12 @@ import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.Purple
 
 @Composable
-fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
+fun PaymentScreen(title: String,onCloseBottomSheet: (Boolean) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Title(title = "Send", isBottomSheet = true) {
+        Title(title = title, isBottomSheet = true) {
             onCloseBottomSheet.invoke(true)
         }
 
@@ -91,6 +91,39 @@ fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "$0", fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.Gray)
 
+            if(title != "Send"){
+            Spacer(modifier = Modifier.height(32.dp))
+            Box(
+                modifier = Modifier
+                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+                    .padding(1.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .background(
+                            color = Color.Transparent,
+                            shape = RoundedCornerShape(21.5.dp)
+                        )
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.card),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "Credit/Debit Card",
+                        style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp),
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = "cash",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+                }
             // Percentage Buttons
             var selectedPercentage by remember { mutableStateOf("25%") }
 
@@ -99,10 +132,10 @@ fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 64.dp, vertical = 16.dp)
+                    .padding(horizontal = 64.dp, vertical = 32.dp)
             ) {
                 // List of labels for buttons
-                listOf("10%", "25%", "50%", "MAX").forEachIndexed { index, label ->
+                listOf("10%", "25%", "50%", "MAX").forEachIndexed { _, label ->
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -127,9 +160,8 @@ fun PaymentScreen(onCloseBottomSheet: (Boolean) -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Numeric Keypad
-        NumericKeypad(onKeyPress = { /* Handle key press */ })
+        NumericKeypad(onKeyPress = { })
 
-        Spacer(modifier = Modifier.weight(0.3f))
         Row(
             modifier = Modifier
                 .weight(0.8f)
@@ -150,7 +182,9 @@ fun NumericKeypad(onKeyPress: (String) -> Unit) {
     )
 
     Column(
-        modifier = Modifier.fillMaxWidth().padding(top = 16.dp), horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         keys.forEach { row ->
             Row(

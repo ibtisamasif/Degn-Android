@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -149,7 +150,8 @@ fun SpotlightSection() {
                 Spacer(modifier = Modifier.weight(1f))
                 Box(
                     modifier = Modifier
-                        .size(6.dp)
+                        .padding(top = 3.dp)
+                        .size(7.dp)
                         .background(
                             Green,
                             shape = CircleShape
@@ -176,7 +178,13 @@ fun SpotlightSection() {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
-                    Text("Bonk", style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text("Bonk", style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp))
+                        Text("$0.22", style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp))
+                    }
                     Row {
                         Text(
                             "▲ $0.226",
@@ -190,8 +198,6 @@ fun SpotlightSection() {
                         )
                     }
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Text("$0.22", style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp))
             }
         }
     }

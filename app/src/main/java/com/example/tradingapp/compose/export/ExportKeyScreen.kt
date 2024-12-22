@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,7 +57,7 @@ fun ExportKeysScreen(onBackPress: () -> Unit) {
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tristique vehicula purus."
             )
             Spacer(modifier = Modifier.height(16.dp))
-            WalletCard(name = "Solana", key = "Ab....kL")
+            WalletCard(name = "Solana", key = "Abqw....keeL")
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "Advanced",
@@ -98,17 +98,21 @@ fun WalletCard(name: String, key: String) {
             modifier = Modifier.weight(1f),
             overflow = TextOverflow.Clip
         )
-        Text(
-            text = key,
-            fontSize = 12.sp,
-            color = Grey,
-            modifier = Modifier.weight(0.4f),
-            overflow = TextOverflow.Ellipsis
-        )
-        IconButton(onClick = { }) {
+        Row(
+            modifier = Modifier.fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = key,
+                fontSize = 14.sp,
+                color = Color.Gray,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(end = 8.dp)
+            )
             Icon(
                 painter = painterResource(id = R.drawable.copy),
                 contentDescription = null,
+                modifier = Modifier.size(17.dp)
             )
         }
     }
@@ -143,16 +147,16 @@ fun SecretPhraseCard() {
         Text(
             text = "Export",
             fontSize = 16.sp,
-            color = Grey
+            color = Color.Gray
         )
         Spacer(modifier = Modifier.width(8.dp))
         Icon(
             Icons.Default.KeyboardArrowRight,
             contentDescription = null,
             modifier = Modifier
-                .size(32.dp)
+                .size(25.dp)
                 .padding(top = 2.dp),
-            tint = Grey
+            tint = Color.Gray
         )
     }
 }

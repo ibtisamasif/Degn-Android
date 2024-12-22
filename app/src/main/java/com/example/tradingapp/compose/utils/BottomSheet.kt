@@ -25,9 +25,9 @@ fun BottomSheet(screenName: String, onCloseBottomSheet: (Boolean) -> Unit) {
     ) {
         when (screenName) {
             "Gain" -> GainsScreen { onCloseBottomSheet.invoke(!it) }
-            "Send" -> PaymentScreen { onCloseBottomSheet.invoke(!it) }
-            "Withdraw" -> PaymentScreen { onCloseBottomSheet.invoke(!it) }
-            "Deposit" -> PaymentScreen { onCloseBottomSheet.invoke(!it) }
+            "Send" -> PaymentScreen("Send") { onCloseBottomSheet.invoke(!it) }
+            "Withdraw" -> PaymentScreen("Withdraw") { onCloseBottomSheet.invoke(!it) }
+            "Deposit" -> PaymentScreen("Deposit") { onCloseBottomSheet.invoke(!it) }
             "Support" -> SupportScreen { onCloseBottomSheet.invoke(!it) }
             "Search" -> SearchScreen { onCloseBottomSheet.invoke(!it) }
             "CashMini" -> CashMiniScreen { onCloseBottomSheet.invoke(!it) }

@@ -5,6 +5,10 @@ data class ConnectAccountRequest(
     val referralCode: String?
 )
 
+data class ResendOtp(
+    val email: String,
+)
+
 data class ConnectAccountResponse(
     val status: Status,
     val body: Body

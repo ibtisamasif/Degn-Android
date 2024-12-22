@@ -89,13 +89,13 @@ fun SliderScreen(onButtonCLicked: ()-> Unit){
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.weight(0.3f)
+            verticalArrangement = Arrangement.Bottom,
+            modifier = Modifier.weight(0.3f).padding(bottom = 40.dp)
         ) {
             Row(
                 modifier = Modifier
                     .padding(vertical = 16.dp),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 repeat(3) { index ->
                     Box(
@@ -111,7 +111,7 @@ fun SliderScreen(onButtonCLicked: ()-> Unit){
             }
 
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                CustomizedButton("Next", 0, null) {
+                CustomizedButton("Next", 60, null) {
                     onButtonCLicked.invoke()
                 }
             }

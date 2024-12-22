@@ -52,7 +52,6 @@ fun SettingsScreen(onMenuCLicked: (String) -> Unit) {
                     .padding(top = 45.dp)
             ) {  Title(title = "Setting") { onMenuCLicked.invoke("Back") } }
         },
-        bottomBar = { BottomNavigationBar(0) {} }
     ) { paddingValues ->
         Column(
             modifier = Modifier

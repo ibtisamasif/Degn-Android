@@ -12,7 +12,7 @@ import org.koin.core.scope.get
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel { AuthenticationViewModel(get(),get()) }
+    single { AuthenticationViewModel(get(),get()) }
     viewModel { WalletViewModel() }
     viewModel { HomeViewModel() }
     viewModel { ProfileViewModel() }

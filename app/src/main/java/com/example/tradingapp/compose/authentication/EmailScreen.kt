@@ -8,6 +8,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -82,6 +84,35 @@ fun EmailScreen(
 
                 if (isEmail) EmailField(viewModel)
                 else OtpInputField(viewModel = viewModel) {}
+                if (!isEmail) {
+                    if (viewModel.startTimer) viewModel.startTimer()
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (viewModel.isTimerRunning.value) {
+                            Text(
+                                text = "Resend Code in ${viewModel.remainingTime.intValue} seconds",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color.Gray
+                            )
+                        } else {
+                            Text(
+                                text = "Resend Code",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color.Blue,
+                                modifier = Modifier.clickable {
+                                    viewModel.isTimerRunning.value = false
+                                    viewModel.startTimer()
+                                    viewModel.resendOtp()
+                                }
+                            )
+                        }
+                    }
+                }
 
                 Row(
                     verticalAlignment = Alignment.Bottom,
@@ -94,10 +125,15 @@ fun EmailScreen(
                         44,
                         null,
                         onButtonClick = {
-                            onButtonClick.invoke("Button")
-//                        viewModel.connectAccount{
-//                            if(it) onButtonClick.invoke("Button")
-//                        }
+                            if(isEmail) {
+                                viewModel.connectAccount {
+                                    if (it) onButtonClick.invoke("Button")
+                                }
+                            }else{
+                                viewModel.verifyAccount {
+                                    if (it) onButtonClick.invoke("Button")
+                                }
+                            }
                         })
                 }
             }

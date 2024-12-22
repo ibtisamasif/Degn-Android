@@ -1,6 +1,7 @@
 package com.example.tradingapp.compose.utils
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -28,27 +30,28 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tradingapp.R
 import com.example.tradingapp.ui.theme.Grey
 import com.example.tradingapp.ui.theme.Purple
 import kotlin.math.roundToInt
 
 @Composable
 fun ConfirmationButton(modifier: Modifier = Modifier) {
-    val dragSize = 50.dp
     val cornerRadius = 18.dp
-    val maxDragPx = with(LocalDensity.current) { (LocalDensity.current.density * (350 - 80)) }
+    val maxDragPx = (LocalDensity.current.density * (350 - 120))
     val dragOffset = remember { mutableFloatStateOf(0f) }
     val progress = dragOffset.floatValue / maxDragPx
-    val isConfirmed = remember { derivedStateOf { progress >= 0.8f } }
 
     Box(
         modifier = modifier
-            .fillMaxWidth() // Takes up the full width
-            .padding(horizontal = 32.dp) // Adds the padding for centering
-            .height(dragSize)
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp)
+            .height(45.dp)
+            .width(87.dp)
             .background(
                 color = Grey,
                 shape = RoundedCornerShape(cornerRadius)
@@ -73,7 +76,7 @@ fun ConfirmationButton(modifier: Modifier = Modifier) {
                 .offset {
                     IntOffset(dragOffset.floatValue.roundToInt(), 0)
                 }
-                .size(dragSize)
+                .size(87.dp,45.dp)
                 .background(
                     color = Color.White,
                     shape = RoundedCornerShape(cornerRadius)
@@ -123,10 +126,10 @@ private fun DraggableControl(
                     tint = Color.White
                 )
             } else {
-                Icon(
-                    imageVector = Icons.Filled.ArrowForward,
-                    contentDescription = "Forward Icon",
-                    tint = Color.White
+                Image(
+                    painter = painterResource(id = R.drawable.double_arrow),
+                    contentDescription = "Confirm Icon",
+                    modifier = Modifier.size(14.dp)
                 )
             }
         }

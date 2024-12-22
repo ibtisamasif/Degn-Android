@@ -96,7 +96,7 @@ fun WalletScreen(onItemSelected: (String) -> Unit) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "0.00 USD",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -151,7 +151,7 @@ fun WalletScreen(onItemSelected: (String) -> Unit) {
                         Text(
                             text = "$0.00",
                             style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp, top = 4.dp)
                         )
                     }
                     Row(
@@ -188,7 +188,7 @@ fun WalletScreen(onItemSelected: (String) -> Unit) {
                         Text(
                             text = "$0.00",
                             style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp, top = 4.dp)
                         )
                     }
 
@@ -207,7 +207,7 @@ fun WalletScreen(onItemSelected: (String) -> Unit) {
                                     name = holding.name,
                                     amount = holding.tokens,
                                     value = holding.value,
-                                    change = "200.56%"
+                                    change = "▲ 200.56%"
                                 ) {
                                     openSheet = true
                                     sheetName = "Gain"
@@ -238,12 +238,12 @@ data class Holding(
 
 // Sample Holding List
 val holdingList = listOf(
-    Holding("Bonk", "1/981 tokens", "$0.22"),
-    Holding("Bonk", "1/981 tokens", "$0.22"),
-    Holding("Chill Doge", "1/981 tokens", "$0.22"),
-    Holding("Chill Doge", "1/981 tokens", "$0.22"),
-    Holding("Shiba", "1/1000 tokens", "$0.50"),
-    Holding("Shiba", "1/1000 tokens", "$0.50"),
+    Holding("Bonk", "1198.1 tokens", "$0.22"),
+    Holding("Chill Doge", "1198.1 tokens", "$0.22"),
+    Holding("Shiba", "12000 tokens", "$0.50"),
+    Holding("Bonk", "1198.1 tokens", "$0.22"),
+    Holding("Chill Doge", "1198.1 tokens", "$0.22"),
+    Holding("Shiba", "14000 tokens", "$0.50"),
 )
 
 
@@ -280,7 +280,7 @@ fun HoldingItem(name: String, amount: String, value: String, change: String, onS
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(id = R.drawable.bonk),
+                painter =  painterResource(id = if(name=="Bonk") R.drawable.bonk else if(name == "Chill Doge") R.drawable.chill_doge else R.drawable.dino),
                 contentDescription = name,
                 modifier = Modifier
                     .size(36.dp)
@@ -302,10 +302,12 @@ fun HoldingItem(name: String, amount: String, value: String, change: String, onS
             Column {
                 Text(
                     text = value,
-                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp)
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp),
+                    modifier = Modifier.padding(bottom = 4.dp, start = 8.dp)
                 )
                 Text(
                     text = change,
+                    color = Color.Green,
                     style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp)
                 )
             }
@@ -317,6 +319,7 @@ fun HoldingItem(name: String, amount: String, value: String, change: String, onS
                     painter = painterResource(R.drawable.share),
                     contentDescription = "share",
                     modifier = Modifier
+                        .padding(top = 4.dp)
                         .size(25.dp)
                         .clip(CircleShape)
                         .background(Purple)
