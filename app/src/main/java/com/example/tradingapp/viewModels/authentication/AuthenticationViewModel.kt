@@ -67,7 +67,7 @@ class AuthenticationViewModel(
             try {
                 val response = authenticationRepo.verifyAccount(email.value, otp.value)
                 if(response.status.code == 201){
-                    pref.put(KEY_LOGIN_TOKEN,response.body.token )
+                    pref.put(KEY_LOGIN_TOKEN,response.body.token)
                     onSuccess.invoke(true)
                 }
                 else onSuccess.invoke(false)

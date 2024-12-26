@@ -1,7 +1,7 @@
 package com.example.tradingapp.di.koin
 
 import com.example.tradingapp.api.ApiService
-import com.example.tradingapp.utils.AppConstants.Companion.BASE_URL
+import com.example.tradingapp.utils.Constants.Companion.BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module

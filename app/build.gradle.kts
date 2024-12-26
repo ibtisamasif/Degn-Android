@@ -72,20 +72,20 @@ dependencies {
     implementation(libs.mpandroidchart)
 
     //koin
-    implementation("io.insert-koin:koin-android:4.0.1-RC1")
-    implementation("io.insert-koin:koin-androidx-navigation:4.0.1-RC1")
-    implementation("io.insert-koin:koin-androidx-compose:4.0.1-RC1")
-    testImplementation("io.insert-koin:koin-test-junit4:4.0.1-RC1")
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.navigation)
+    implementation(libs.koin.androidx.compose)
+    testImplementation(libs.koin.test.junit4)
 
     //moonpay SDK
     implementation(libs.moonpaysdk.android)
 
     //gson
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.gson)
 
     //Retrofit
 
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 }
