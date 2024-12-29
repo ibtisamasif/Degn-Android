@@ -17,10 +17,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.example.tradingapp.R
 import com.example.tradingapp.data.Screens
+import com.example.tradingapp.viewModels.authentication.AuthenticationViewModel
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen(
+    viewModel: AuthenticationViewModel = koinViewModel(),
+    navController: NavController
+) {
 
     val alpha = remember { Animatable(0f) }
 
@@ -45,7 +50,8 @@ fun SplashScreen(navController: NavController) {
 
     LaunchedEffect(true) {
         delay(2000)
-        navController.navigate(Screens.SliderScreen.route)
+        if(viewModel.isUserLogin()) navController.navigate(Screens.HomeScreen.route)
+        else navController.navigate(Screens.SliderScreen.route)
     }
 
 }

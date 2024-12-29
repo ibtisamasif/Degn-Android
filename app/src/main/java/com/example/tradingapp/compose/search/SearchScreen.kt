@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,14 +28,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
-import com.example.tradingapp.compose.home.ListSection
 import com.example.tradingapp.compose.utils.SearchField
 
 @Composable
 fun SearchScreen(onCloseBottomSheet: (Boolean) -> Unit) {
     Scaffold(
         topBar = {
-            Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, start = 36.dp)) {
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, start = 36.dp)) {
                 SearchField(
                     editable = true
                 )
@@ -233,6 +232,6 @@ private fun TopMarketCaps() {
             fontWeight = FontWeight.SemiBold
         )
 
-        ListSection(6) {}
+//        ListSection() {}
     }
 }

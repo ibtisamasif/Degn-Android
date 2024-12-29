@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tradingapp.MainActivity
 import com.example.tradingapp.compose.authentication.EmailScreen
 import com.example.tradingapp.compose.export.ExportKeysScreen
+import com.example.tradingapp.compose.export.VerifyOTP
 import com.example.tradingapp.compose.home.ActivityScreen
 import com.example.tradingapp.compose.home.CoinDetailScreen
 import com.example.tradingapp.compose.home.HomeScreen
@@ -29,7 +30,7 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager)
         startDestination = Screens.SplashScreen.route,
     ) {
         composable(route = Screens.SplashScreen.route) {
-            SplashScreen(navController)
+            SplashScreen(navController=navController)
         }
 
         composable(route = Screens.SliderScreen.route) {
@@ -53,13 +54,13 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager)
         }
 
         composable(route = Screens.HomeScreen.route) {
-            HomeScreen(true) {
+            HomeScreen(isHome = true) {
               navController.navigate(it)
             }
         }
 
         composable(route = Screens.TrendingScreen.route) {
-            HomeScreen(false) {
+            HomeScreen(isHome = false) {
                 navController.navigate(it)
             }
         }
@@ -96,7 +97,10 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager)
 
         composable(route = Screens.ExportScreen.route) {
             ExportKeysScreen{
-                navController.navigateUp()
+                when(it){
+                    "SecretKey" -> navController.navigate(Screens.VerifyOTPScreen.route)
+                    "Back" -> navController.navigateUp()
+                }
             }
         }
 
@@ -120,6 +124,12 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager)
 
         composable(route = Screens.CoinDetailScreen.route) {
             CoinDetailScreen{
+                navController.navigateUp()
+            }
+        }
+
+        composable(route = Screens.VerifyOTPScreen.route) {
+            VerifyOTP{
                 navController.navigateUp()
             }
         }

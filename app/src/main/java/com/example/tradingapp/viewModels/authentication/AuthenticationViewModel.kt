@@ -30,6 +30,9 @@ class AuthenticationViewModel(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
+    fun isUserLogin(): Boolean{
+        return !pref.getAccessToken().isNullOrEmpty()
+    }
     fun connectAccount(referralCode: String? = "",onSuccess: (Boolean)-> Unit) {
         viewModelScope.launch {
             try {

@@ -31,18 +31,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.notification.TitleAndDescription
+import com.example.tradingapp.compose.utils.BottomSheet
 import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.Grey
+import com.example.tradingapp.viewModels.export.ExportViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ExportKeysScreen(onBackPress: () -> Unit) {
+fun ExportKeysScreen(
+    viewModel: ExportViewModel = koinViewModel(),
+    onButtonPress: (String) -> Unit
+) {
     Scaffold(
         topBar = {
             Box(
                 modifier = Modifier
                     .padding(top = 45.dp)
             ) {
-                Title("Export keys") { onBackPress.invoke() }
+                Title("Export keys") { onButtonPress.invoke("Back") }
             }
         }
     ) { paddingValues ->
@@ -57,7 +63,7 @@ fun ExportKeysScreen(onBackPress: () -> Unit) {
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tristique vehicula purus."
             )
             Spacer(modifier = Modifier.height(16.dp))
-            WalletCard(name = "Solana", key = "Abqw....keeL")
+            WalletCard(name = "Solana", key = "${viewModel.walletKey.take(4)}....${viewModel.walletKey.takeLast(4)}")
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "Advanced",
@@ -66,7 +72,14 @@ fun ExportKeysScreen(onBackPress: () -> Unit) {
                 color = Color.Black
             )
             Spacer(modifier = Modifier.height(8.dp))
-            SecretPhraseCard()
+            SecretPhraseCard{
+                onButtonPress.invoke(it)
+                viewModel.sendOtp()
+            }
+        }
+
+        if (viewModel.isShowSecretKey.value) BottomSheet("SecretKey"){
+           if(it) viewModel.isShowSecretKey.value = false
         }
     }
 }
@@ -119,7 +132,7 @@ fun WalletCard(name: String, key: String) {
 }
 
 @Composable
-fun SecretPhraseCard() {
+fun SecretPhraseCard(onButtonPress: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,7 +141,7 @@ fun SecretPhraseCard() {
             .border(1.dp, Color.Black, RoundedCornerShape(18.dp))
             .background(Color.White)
             .padding(horizontal = 16.dp, vertical = 6.dp)
-            .clickable { },
+            .clickable { onButtonPress.invoke("SecretKey")},
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

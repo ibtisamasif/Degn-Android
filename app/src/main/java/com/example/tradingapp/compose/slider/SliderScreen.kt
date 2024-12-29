@@ -27,7 +27,9 @@ import com.example.tradingapp.R
 import com.example.tradingapp.compose.utils.CustomizedButton
 
 @Composable
-fun SliderScreen(onButtonCLicked: ()-> Unit){
+fun SliderScreen(
+    onButtonCLicked: ()-> Unit,
+){
     val pagerState =
         rememberPagerState(initialPage = 0, initialPageOffsetFraction = 0f, pageCount = { 3 })
 

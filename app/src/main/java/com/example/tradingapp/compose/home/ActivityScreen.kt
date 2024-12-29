@@ -28,7 +28,7 @@ fun ActivityScreen(onBackPress: () -> Unit) {
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            ListSection(2) {}
+//            ListSection(2) {}
         }
     }
 }

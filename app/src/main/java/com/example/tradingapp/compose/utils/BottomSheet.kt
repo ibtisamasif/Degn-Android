@@ -6,6 +6,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.example.tradingapp.compose.account.GainsScreen
+import com.example.tradingapp.compose.export.SecurePhraseScreen
 import com.example.tradingapp.compose.payment.CashMiniScreen
 import com.example.tradingapp.compose.payment.DepositMiniScreen
 import com.example.tradingapp.compose.payment.PaymentScreen
@@ -32,6 +33,7 @@ fun BottomSheet(screenName: String, onCloseBottomSheet: (Boolean) -> Unit) {
             "Search" -> SearchScreen { onCloseBottomSheet.invoke(!it) }
             "CashMini" -> CashMiniScreen { onCloseBottomSheet.invoke(!it) }
             "DepositMini" -> DepositMiniScreen()
+            "SecretKey" -> SecurePhraseScreen()
         }
     }
 }

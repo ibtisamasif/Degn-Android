@@ -83,6 +83,9 @@ dependencies {
     //gson
     implementation(libs.gson)
 
+    //Coil
+    implementation(libs.coil.compose)
+
     //Retrofit
 
     implementation(libs.retrofit)

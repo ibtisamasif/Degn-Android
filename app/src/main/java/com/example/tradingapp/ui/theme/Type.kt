@@ -87,7 +87,7 @@ val Typography = Typography(
         letterSpacing = 0.sp
     ),
     bodySmall = TextStyle(
-        fontFamily = InterExtraLight,
+        fontFamily = InterNormal,
         fontSize = 12.sp,
         letterSpacing = 0.sp
     ),

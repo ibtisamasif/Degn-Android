@@ -10,14 +10,15 @@ import com.example.tradingapp.viewModels.settings.SettingsViewModel
 import com.example.tradingapp.viewModels.wallet.WalletViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import kotlin.math.sin
 
 val viewModelModule = module {
     single { AuthenticationViewModel(get(), get()) }
     viewModel { WalletViewModel() }
-    viewModel { HomeViewModel(get(), get()) }
+    single { HomeViewModel(get(), get()) }
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { RewardsViewModel() }
     viewModel { SearchViewModel() }
     viewModel { SettingsViewModel() }
-    viewModel { ExportViewModel(get(), get()) }
+    single { ExportViewModel(get(), get()) }
 }

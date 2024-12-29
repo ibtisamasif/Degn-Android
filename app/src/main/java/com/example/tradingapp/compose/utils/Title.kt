@@ -48,7 +48,7 @@ fun Title(title: String, isBottomSheet: Boolean = false, onBackPress: () -> Unit
                 )
             }
             if (isBottomSheet) {
-                Box(modifier = Modifier.align(Alignment.CenterEnd).padding(12.dp)) {
+                Box(modifier = Modifier.align(Alignment.CenterEnd).padding(start = 12.dp, end = 4.dp)) {
                     Image(
                         painter = painterResource(id = R.drawable.close),
                         contentDescription = "Close",

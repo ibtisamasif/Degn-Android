@@ -268,6 +268,7 @@ class DegnSharedPref(val pref: SharedPreferences) {
         const val KEY_LOGIN_EMAIL = "user_login_email"
         const val KEY_LOGIN_ROLE = "user_login_role"
         const val KEY_LOGIN_NAME = "user_login_name"
+        const val WALLET_KEY = "user_wallet_key"
         const val API_LOGIN_NAME_PARAM = "loginName"
         const val SHAR_IS_URL_CHANGE = "false"
         const val KEY_LOGIN_NUMBER = "user_login_number"
@@ -275,6 +276,8 @@ class DegnSharedPref(val pref: SharedPreferences) {
         const val KEY_MENU_ITEMS = "menu_items"
         const val CONST_ARRAYLIST = "arrayList"
         const val CONST_SELECTED_URL = "selectedURL"
+        const val CONST_IMAGE_URL = "imageURL"
+        const val JOINED_AT = "joinedDate"
 
         // Sharedpref file name
         const val PREF_NAME = "ProjectDegnPrefs"

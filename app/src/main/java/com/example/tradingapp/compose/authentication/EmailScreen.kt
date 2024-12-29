@@ -31,6 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.tradingapp.compose.utils.CustomEmailField
+import com.example.tradingapp.compose.utils.CustomOtpInputField
 import com.example.tradingapp.compose.utils.CustomizedButton
 import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.TradingAppTheme
@@ -82,8 +84,18 @@ fun EmailScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                if (isEmail) EmailField(viewModel)
-                else OtpInputField(viewModel = viewModel) {}
+                if (isEmail) {
+                    CustomEmailField(
+                        value = viewModel.email.value,
+                        onValueChange = {viewModel.email.value = it},
+                        placeholder = "Enter email"
+                    )
+                }
+                else{
+                    CustomOtpInputField(
+                        onValueChange = {viewModel.otp.value = it},
+                    )
+                }
                 if (!isEmail) {
                     if (viewModel.startTimer) viewModel.startTimer()
                     Row(

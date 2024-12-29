@@ -16,4 +16,5 @@ sealed class Screens(val route: String){
     data object NotificationScreen : Screens("NotificationScreen")
     data object LegalScreen : Screens("LegalScreen")
     data object ExportScreen : Screens("ExportScreen")
+    data object VerifyOTPScreen : Screens("VerifyOTPScreen")
 }

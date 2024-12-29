@@ -29,6 +29,15 @@ data class TokensResponse(
     val body: TokensBody
 )
 
+data class TokenResponse(
+    val status: Status,
+    val body: TokenBody
+)
+
 data class TokensBody(
     val tokens: List<TokenDetails>
+)
+
+data class TokenBody(
+    val token: TokenDetails
 )

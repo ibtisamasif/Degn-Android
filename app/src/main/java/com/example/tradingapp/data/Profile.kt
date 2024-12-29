@@ -1,8 +1,13 @@
 package com.example.tradingapp.data
 
-data class GetProfileResponse(
+data class ProfileResponse(
     val status: Status,
     val body: UserBody
+)
+
+data class UpdateProfileRequest(
+    val userName: String,
+    val isEnableNotification: Boolean
 )
 
 data class UserBody(
@@ -19,10 +24,13 @@ data class User(
     val isActive: Boolean,
     val createdAt: String,
     val updatedAt: String,
-    val __v: Int
+    val __v: Int,
+    val profileUrl: String,
+    val referralCode: String,
 )
 
 data class WalletInfo(
     val turnKeyWalletId: String,
-    val address: String
+    val address: String,
+    val hasExported: Boolean
 )

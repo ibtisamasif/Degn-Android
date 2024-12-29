@@ -49,7 +49,6 @@ fun SearchField(
     var text by remember { mutableStateOf(initialValue) }
     val interactionSource = remember { MutableInteractionSource() }
     val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()

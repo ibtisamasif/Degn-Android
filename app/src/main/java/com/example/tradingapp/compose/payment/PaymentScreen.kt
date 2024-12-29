@@ -4,13 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,7 +18,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,7 +43,7 @@ import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.Purple
 
 @Composable
-fun PaymentScreen(title: String,onCloseBottomSheet: (Boolean) -> Unit) {
+fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -84,38 +81,6 @@ fun PaymentScreen(title: String,onCloseBottomSheet: (Boolean) -> Unit) {
                         style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.padding(end = 8.dp)
                     )
-                    Icon(imageVector = Icons.Default.KeyboardArrowDown, contentDescription = "cash", modifier = Modifier.size(20.dp))
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "$0", fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.Gray)
-
-            if(title != "Send"){
-            Spacer(modifier = Modifier.height(32.dp))
-            Box(
-                modifier = Modifier
-                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
-                    .padding(1.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .background(
-                            color = Color.Transparent,
-                            shape = RoundedCornerShape(21.5.dp)
-                        )
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.card),
-                        contentDescription = null
-                    )
-                    Text(
-                        text = "Credit/Debit Card",
-                        style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp),
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowDown,
                         contentDescription = "cash",
@@ -123,8 +88,44 @@ fun PaymentScreen(title: String,onCloseBottomSheet: (Boolean) -> Unit) {
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "$0", fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.Gray)
+
+            if (title != "Send") {
+                Spacer(modifier = Modifier.height(32.dp))
+                Box(
+                    modifier = Modifier
+                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+                        .padding(1.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .background(
+                                color = Color.Transparent,
+                                shape = RoundedCornerShape(21.5.dp)
+                            )
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.card),
+                            contentDescription = null
+                        )
+                        Text(
+                            text = "Credit/Debit Card",
+                            style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp),
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "cash",
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
-            // Percentage Buttons
+            }
+
             var selectedPercentage by remember { mutableStateOf("25%") }
 
             // Row with buttons
@@ -190,7 +191,8 @@ fun NumericKeypad(onKeyPress: (String) -> Unit) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp, vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(horizontal = 32.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 row.forEach { key ->
                     Button(
@@ -201,7 +203,7 @@ fun NumericKeypad(onKeyPress: (String) -> Unit) {
                             containerColor = Color.White
                         ),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
-                        modifier = Modifier.size( 68.dp)
+                        modifier = Modifier.size(68.dp)
                     ) {
                         if (key !== "") {
                             Text(text = key, style = MaterialTheme.typography.titleLarge)
