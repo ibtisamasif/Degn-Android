@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,12 +39,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
+import com.example.tradingapp.compose.utils.BottomSheet
 import com.example.tradingapp.compose.utils.ConfirmationButton
 import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.Purple
 
 @Composable
 fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
+    var amount by remember { mutableStateOf("0.00") }
+    var screenName by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,6 +74,7 @@ fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
                             shape = RoundedCornerShape(21.5.dp)
                         )
                         .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .clickable { screenName = "CashMini" }
                 ) {
                     Text(
                         text = "Cash:",
@@ -90,9 +95,9 @@ fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "$0", fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.Gray)
+            Text(text = "$$amount", fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.Gray)
 
-            if (title != "Send") {
+            if (title != "Send" && title != "Buy" && title != "Sell") {
                 Spacer(modifier = Modifier.height(32.dp))
                 Box(
                     modifier = Modifier
@@ -107,6 +112,7 @@ fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
                                 shape = RoundedCornerShape(21.5.dp)
                             )
                             .padding(horizontal = 16.dp, vertical = 4.dp)
+                            .clickable { screenName = "DepositMini" }
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.card),
@@ -128,14 +134,12 @@ fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
 
             var selectedPercentage by remember { mutableStateOf("25%") }
 
-            // Row with buttons
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 64.dp, vertical = 32.dp)
             ) {
-                // List of labels for buttons
                 listOf("10%", "25%", "50%", "MAX").forEachIndexed { _, label ->
                     Box(
                         modifier = Modifier
@@ -160,8 +164,9 @@ fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Numeric Keypad
-        NumericKeypad(onKeyPress = { })
+        NumericKeypad(onKeyPress = {key->
+            amount = updateAmount(amount, key)
+        })
 
         Row(
             modifier = Modifier
@@ -170,9 +175,14 @@ fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ConfirmationButton()
+            ConfirmationButton{
+                onCloseBottomSheet.invoke(true)
+            }
         }
 
+    }
+    if(screenName != "") BottomSheet(screenName){
+        screenName = ""
     }
 }
 
@@ -219,5 +229,23 @@ fun NumericKeypad(onKeyPress: (String) -> Unit) {
             }
         }
     }
+}
+
+private fun updateAmount(currentAmount: String, key: String): String {
+    return when (key) {
+        "" -> {
+            if (currentAmount.isNotEmpty()) currentAmount.dropLast(1).ifEmpty { "0" } else "0"
+        }
+        "." -> {
+            if (currentAmount.contains(".")) {
+                currentAmount.replace(".", "") + "."
+            } else {
+                "$currentAmount."
+            }
+        }
+        else -> {
+            if (currentAmount == "0.00") key else currentAmount + key
+        }
+    }.trimStart('0').ifEmpty { "0.00" }
 }
 

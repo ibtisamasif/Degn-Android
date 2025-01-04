@@ -23,7 +23,7 @@ import com.example.tradingapp.data.Screens
 import com.example.tradingapp.utils.BiometricPromptManager
 
 @Composable
-fun NavController(activity: MainActivity, promptManager: BiometricPromptManager) {
+fun NavController(activity: MainActivity, promptManager: BiometricPromptManager,openMoonPaySDK: (String)-> Unit) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -73,7 +73,11 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager)
 
         composable(route = Screens.WalletScreen.route) {
             WalletScreen {
-                navController.navigate(it)
+                when(it){
+                    "Sell" -> openMoonPaySDK.invoke("Sell")
+                    "Buy" -> openMoonPaySDK.invoke("Buy")
+                     else -> navController.navigate(it)
+                }
             }
         }
 

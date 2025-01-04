@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tradingapp.data.ConnectAccountResponse
 import com.example.tradingapp.di.pref.DegnSharedPref
+import com.example.tradingapp.di.pref.DegnSharedPref.Companion.KEY_LOGIN_EMAIL
 import com.example.tradingapp.di.pref.DegnSharedPref.Companion.KEY_LOGIN_TOKEN
 import com.example.tradingapp.repo.AuthenticationRepo
 import kotlinx.coroutines.delay
@@ -71,6 +72,7 @@ class AuthenticationViewModel(
                 val response = authenticationRepo.verifyAccount(email.value, otp.value)
                 if(response.status.code == 201){
                     pref.put(KEY_LOGIN_TOKEN,response.body.token)
+                    pref.put(KEY_LOGIN_EMAIL, email.value)
                     onSuccess.invoke(true)
                 }
                 else onSuccess.invoke(false)
@@ -86,16 +88,6 @@ class AuthenticationViewModel(
             try {
                 authenticationRepo.resendOtp(email.value)
             }catch (e: Exception){
-                _error.value = e.message
-            }
-        }
-    }
-
-    fun checkHealth() {
-        viewModelScope.launch {
-            try {
-                authenticationRepo.checkHealth()
-            } catch (e: Exception) {
                 _error.value = e.message
             }
         }

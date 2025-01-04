@@ -24,6 +24,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -51,6 +52,16 @@ fun CustomOtpInputField(
     var otpValues by remember { mutableStateOf(List(otpLength) { "" }) }
     val focusRequesters = List(otpLength) { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val clipboardManager = LocalClipboardManager.current
+
+    val clipboardText = clipboardManager.getText()?.text ?: ""
+    if (clipboardText.length == otpLength && clipboardText.all { it.isDigit() }) {
+        otpValues = clipboardText.map { it.toString() }
+        onValueChange(clipboardText)
+        onOtpComplete?.invoke(clipboardText)
+        keyboardController?.hide()
+    }
 
     Row(
         modifier = Modifier.padding(16.dp),

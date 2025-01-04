@@ -3,7 +3,7 @@ package com.example.tradingapp.data
 data class TokenDetails(
     val _id: String,
     val name: String,
-    val description: String,
+    val description: String?,
     val symbol: String,
     val uri: String,
     val decimals: Int,
@@ -14,7 +14,7 @@ data class TokenDetails(
     val isPartOfToken: Boolean,
     val createdAt: String,
     val updatedAt: String,
-    val isSpotLight: Boolean,
+    val isSpotlight: Boolean,
     val isActive: Boolean,
     val __v: Int
 )

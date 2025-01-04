@@ -17,10 +17,6 @@ class AuthenticationRepo(private val apiService: ApiService)  {
         return apiService.verifyAccount(request)
     }
 
-    suspend fun checkHealth(): Status {
-        return apiService.checkHealth()
-    }
-
     suspend fun resendOtp(email: String): ConnectAccountResponse {
         val  request = ResendOtp(email= email)
         return apiService.resendOtp(request)

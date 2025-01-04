@@ -45,7 +45,7 @@ data class Transaction(
     val type: String,
     val user: String,
     val transaction: String?,
-    val token: String,
+    val token: TokenDetails,
     val isActive: Boolean,
     val createdAt: String,
     val updatedAt: String,

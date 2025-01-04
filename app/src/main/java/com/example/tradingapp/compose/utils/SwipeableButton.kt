@@ -40,7 +40,10 @@ import com.example.tradingapp.ui.theme.Purple
 import kotlin.math.roundToInt
 
 @Composable
-fun ConfirmationButton(modifier: Modifier = Modifier) {
+fun ConfirmationButton(
+    modifier: Modifier = Modifier,
+    onConfirm: () -> Unit
+) {
     val cornerRadius = 18.dp
     val maxDragPx = (LocalDensity.current.density * (350 - 120))
     val dragOffset = remember { mutableFloatStateOf(0f) }
@@ -70,7 +73,6 @@ fun ConfirmationButton(modifier: Modifier = Modifier) {
             )
         }
 
-        // Draggable Control
         DraggableControl(
             modifier = Modifier
                 .offset {
@@ -89,6 +91,7 @@ fun ConfirmationButton(modifier: Modifier = Modifier) {
                     onDragStopped = {
                         if (progress >= 0.8f) {
                             dragOffset.floatValue = maxDragPx
+                            onConfirm.invoke()
                         } else {
                             dragOffset.floatValue = 0f
                         }

@@ -31,10 +31,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -42,9 +44,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
 import com.example.tradingapp.R
+import com.example.tradingapp.compose.utils.BottomSheet
 import com.example.tradingapp.compose.utils.CircularProgress
 import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.Green
+import com.example.tradingapp.ui.theme.Red
 import com.example.tradingapp.viewModels.home.HomeViewModel
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
@@ -61,6 +65,7 @@ fun CoinDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.isLoading.value = true
         viewModel.fetchTokenByID(viewModel.selectedCoinId.value)
+        viewModel.fetchUserBalance(viewModel.selectedCoinId.value)
     }
 
     val scrollState = rememberScrollState()
@@ -95,11 +100,45 @@ fun CoinDetailScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    CoinDataSection()
+                    CoinDataSection(viewModel = viewModel)
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    BuyButton()
+                    val balance = viewModel.userBalance.collectAsState().value
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        balance?.let {
+                            if (it.cashBalance > 0) {
+                                BuySellButton(
+                                    buttonText = "Buy",
+                                    textColor = Color.Black,
+                                    buttonColor = Green,
+                                    modifier = Modifier.weight(1f),
+                                    onClick = { viewModel.buyTransaction() }
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                BuySellButton(
+                                    buttonText = "Sell",
+                                    textColor = Color.White,
+                                    buttonColor = Red,
+                                    modifier = Modifier.weight(1f),
+                                    onClick = { viewModel.sellTransaction() }
+                                )
+                            } else {
+                                BuySellButton(
+                                    buttonText = "Buy",
+                                    textColor = Color.Black,
+                                    buttonColor = Green,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = { viewModel.buyTransaction() }
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -107,6 +146,13 @@ fun CoinDetailScreen(
     if(viewModel.isLoading.value){
         CircularProgress()
     }
+
+    if(viewModel.transaction.value != ""){
+        BottomSheet(screenName = viewModel.transaction.value) {
+            viewModel.transaction.value = ""
+        }
+    }
+
 }
 
 @Composable
@@ -304,7 +350,7 @@ fun AboutSection(
 }
 
 @Composable
-fun CoinDataSection() {
+fun CoinDataSection(viewModel: HomeViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -360,7 +406,7 @@ fun CoinDataSection() {
             ) {
                 Text("Created", style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp))
                 Text(
-                    "3d 12h ago",
+                    viewModel.tokenCreationDate.value,
                     style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp)
                 )
             }
@@ -369,23 +415,33 @@ fun CoinDataSection() {
 }
 
 @Composable
-fun BuyButton() {
+fun BuySellButton(
+    buttonText: String,
+    textColor: Color,
+    buttonColor: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Button(
-        onClick = {},
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 32.dp)
-            .fillMaxWidth()
+        onClick = { onClick.invoke() },
+        modifier = modifier
             .height(48.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Green),
+        colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.dollar_icon),
-            contentDescription = null,
-            modifier = Modifier.padding(end = 8.dp),
-            tint = Color.Black
-        )
-        Text("Buy", fontSize = 18.sp, color = Color.Black)
+        Box(modifier = Modifier
+            .size(24.dp)
+            .clip(CircleShape)
+            .background(textColor)) {
+            Icon(
+                painter = painterResource(id = R.drawable.dollar_icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize(0.7f)
+                    .align(Alignment.Center),
+                tint = buttonColor
+            )
+        }
+        Text(buttonText, fontSize = 18.sp, color = textColor, modifier = Modifier.padding(start = 8.dp, bottom = 2.dp))
     }
 }

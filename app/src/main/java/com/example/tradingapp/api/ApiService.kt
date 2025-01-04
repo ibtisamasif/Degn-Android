@@ -6,18 +6,19 @@ import com.example.tradingapp.data.MoonPaySignatureResponse
 import com.example.tradingapp.data.OtpResponse
 import com.example.tradingapp.data.ProfileResponse
 import com.example.tradingapp.data.ResendOtp
-import com.example.tradingapp.data.Status
 import com.example.tradingapp.data.TokenResponse
 import com.example.tradingapp.data.TokensResponse
 import com.example.tradingapp.data.TransactionRequest
 import com.example.tradingapp.data.TransactionResponse
 import com.example.tradingapp.data.TransactionsResponse
 import com.example.tradingapp.data.UpdateProfileRequest
+import com.example.tradingapp.data.UserBalanceResponse
 import com.example.tradingapp.data.VerifyOtpRequest
 import com.example.tradingapp.data.VerifyWalletResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -37,9 +38,6 @@ interface ApiService {
     suspend fun verifyAccount(
         @Body request: Map<String, String>
     ): ConnectAccountResponse
-
-    @GET("account/health")
-    suspend fun checkHealth(): Status
 
     @PUT("account/resend/otp")
     suspend fun resendOtp(
@@ -84,6 +82,11 @@ interface ApiService {
         @Part file: MultipartBody.Part
     ): Response<ProfileResponse>
 
+    @DELETE("user/me")
+    suspend fun deleteUserAccount(
+        @Header("Authorization") token: String
+    ): Response<Unit>
+
     @GET("user/export/wallet/otp")
     suspend fun sendWalletOtp(
         @Header("Authorization") token: String
@@ -107,7 +110,13 @@ interface ApiService {
         @Query("url") url: String
     ): Response<MoonPaySignatureResponse>
 
-    @GET("/transaction")
+    @GET("user/balance")
+    suspend fun getUserBalance(
+        @Header("Authorization") token: String,
+        @Query("tokenId") tokenId: String? = null
+    ): Response<UserBalanceResponse>
+
+    @GET("transaction")
     suspend fun getTransactions(
         @Header("Authorization") token: String,
         @Query("offset") offset: Int,

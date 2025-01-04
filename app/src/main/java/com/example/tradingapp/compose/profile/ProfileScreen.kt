@@ -10,17 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,16 +21,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -45,13 +33,11 @@ import com.example.tradingapp.R
 import com.example.tradingapp.compose.utils.CircularProgress
 import com.example.tradingapp.compose.utils.CustomEmailField
 import com.example.tradingapp.compose.utils.Title
-import com.example.tradingapp.ui.theme.Purple
 import com.example.tradingapp.viewModels.profile.ProfileViewModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.androidx.compose.koinViewModel
-import java.io.File
 
 @Composable
 fun ProfileScreen(
@@ -66,8 +52,11 @@ fun ProfileScreen(
         uri?.let {
             val file = viewModel.uriToFile(context, it)
             if (file != null) {
-                val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-                val multipartBody = MultipartBody.Part.createFormData("file", file.name, requestBody)
+                // Convert the file to JPG format if necessary
+                val jpgFile = viewModel.convertToJpgIfNecessary(context, file)
+                val requestBody = jpgFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                val multipartBody =
+                    MultipartBody.Part.createFormData("file", jpgFile.name, requestBody)
 
                 viewModel.updateProfilePicture(multipartBody)
             }

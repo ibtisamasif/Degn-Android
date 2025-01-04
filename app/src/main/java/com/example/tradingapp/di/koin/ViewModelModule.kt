@@ -14,11 +14,11 @@ import kotlin.math.sin
 
 val viewModelModule = module {
     single { AuthenticationViewModel(get(), get()) }
-    viewModel { WalletViewModel() }
-    single { HomeViewModel(get(), get(),get()) }
+    viewModel { WalletViewModel(get(),get()) }
+    single { HomeViewModel(get(), get(),get(),get()) }
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { RewardsViewModel() }
     viewModel { SearchViewModel() }
-    viewModel { SettingsViewModel() }
+    viewModel { SettingsViewModel(get()) }
     single { ExportViewModel(get(), get()) }
 }

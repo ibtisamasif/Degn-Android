@@ -33,4 +33,14 @@ class ProfileRepo(private val apiService: ApiService) {
         }
     }
 
+    suspend fun deleteUserAccount(token: String): Boolean {
+        return try {
+            val response = apiService.deleteUserAccount(token)
+            response.isSuccessful
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
 }

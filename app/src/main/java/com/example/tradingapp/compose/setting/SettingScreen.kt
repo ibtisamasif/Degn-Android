@@ -24,26 +24,38 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.BottomNavigationBar
 import com.example.tradingapp.compose.utils.BottomSheet
 import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.OffWhite
 import com.example.tradingapp.ui.theme.Sky
+import com.example.tradingapp.viewModels.settings.SettingsViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsScreen(onMenuCLicked: (String) -> Unit) {
+fun SettingsScreen(
+    viewModel: SettingsViewModel = koinViewModel(),
+    onMenuCLicked: (String) -> Unit
+) {
+    LaunchedEffect(Unit){
+        viewModel.getUserDetail()
+    }
     var isShowSheet by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
@@ -71,18 +83,31 @@ fun SettingsScreen(onMenuCLicked: (String) -> Unit) {
                     .padding(16.dp)
                     .clickable { onMenuCLicked.invoke("Profile") }
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.AccountCircle,
-                    contentDescription = "Profile Icon",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(OffWhite, CircleShape),
-                    tint = Sky
-                )
+                if(viewModel.profileImage.isNullOrEmpty()) {
+                    Icon(
+                        imageVector = Icons.Rounded.AccountCircle,
+                        contentDescription = "Profile Icon",
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(OffWhite, CircleShape),
+                        tint = Sky
+                    )
+                }else {
+                    AsyncImage(
+                        model = viewModel.profileImage,
+                        contentDescription = "Profile Picture from URL",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(OffWhite, CircleShape)
+                            .clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
                 Column {
-                    Text(text = "@yourusername123", fontWeight = FontWeight.Bold)
+                    (if(viewModel.userName.isNullOrEmpty()) "@username" else viewModel.userName)?.let { Text(text = it, fontWeight = FontWeight.Bold) }
                     Text(
-                        text = "youremailaddress@gmail.com",
+                        text = viewModel.userEmail.toString(),
                         color = Color.Gray,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -96,7 +121,6 @@ fun SettingsScreen(onMenuCLicked: (String) -> Unit) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Settings Options
             val settingsItems = listOf(
                 Pair(R.drawable.notification, "Notifications"),
                 Pair(R.drawable.lock, "Export Keys"),

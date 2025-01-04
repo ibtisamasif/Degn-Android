@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,19 +33,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.tradingapp.R
 import com.example.tradingapp.compose.BottomNavigationBar
 import com.example.tradingapp.compose.utils.BottomSheet
 import com.example.tradingapp.compose.utils.TopBar
 import com.example.tradingapp.ui.theme.Purple
 import com.example.tradingapp.ui.theme.TradingAppTheme
+import com.example.tradingapp.viewModels.wallet.WalletViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun WalletScreen(onItemSelected: (String) -> Unit) {
-    var isShowSheet by remember { mutableStateOf(false) }
+fun WalletScreen(
+    viewModel: WalletViewModel = koinViewModel(),
+    onItemSelected: (String) -> Unit
+) {
+    LaunchedEffect(Unit) {
+        viewModel.getUserDetail()
+    }
+    var openSheet by remember { mutableStateOf(false) }
+    var sheetName by remember { mutableStateOf("") }
     TradingAppTheme {
         Scaffold(
             topBar = {
@@ -53,7 +65,10 @@ fun WalletScreen(onItemSelected: (String) -> Unit) {
                         .padding(top = 45.dp)
                 ) {
                     TopBar {
-                        if(it=="Search") isShowSheet = true
+                        if(it=="Search"){
+                            sheetName = "Search"
+                            openSheet = true
+                        }
                         else onItemSelected.invoke(it)
                     }
                 }
@@ -68,23 +83,33 @@ fun WalletScreen(onItemSelected: (String) -> Unit) {
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                var openSheet by remember { mutableStateOf(false) }
-                var sheetName by remember { mutableStateOf("") }
-                // Profile Section
                 Spacer(modifier = Modifier.height(8.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.edit_profile), // Replace with actual drawable
-                    contentDescription = "Profile Picture",
-                    modifier = Modifier
-                        .size(95.dp)
-                )
+                if(viewModel.profileImage.isNullOrEmpty()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.edit_profile),
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier
+                            .size(95.dp)
+                    )
+                }else{
+                    AsyncImage(
+                        model = viewModel.profileImage,
+                        contentDescription = "Profile Picture from URL",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(95.dp)
+                            .clip(CircleShape)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = "@yourusername123",
-                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp)
-                )
+                (if(viewModel.userName.isNullOrEmpty()) "@username" else viewModel.userName)?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -95,7 +120,7 @@ fun WalletScreen(onItemSelected: (String) -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "0.00 USD",
+                    text = "0.01 USD",
                     style = MaterialTheme.typography.titleLarge,
                 )
 
@@ -136,7 +161,6 @@ fun WalletScreen(onItemSelected: (String) -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Cash Section
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -149,7 +173,7 @@ fun WalletScreen(onItemSelected: (String) -> Unit) {
                             style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp)
                         )
                         Text(
-                            text = "$0.00",
+                            text = "$0.01",
                             style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
                             modifier = Modifier.padding(start = 8.dp, top = 4.dp)
                         )
@@ -218,13 +242,14 @@ fun WalletScreen(onItemSelected: (String) -> Unit) {
                 }
                 if (openSheet) {
                     BottomSheet(sheetName) {
+                        when(sheetName){
+                            "Deposit" -> onItemSelected.invoke("Buy")
+                            "Withdraw" -> onItemSelected.invoke("Sell")
+                        }
                         openSheet = it
                     }
                 }
             }
-        }
-        if (isShowSheet) BottomSheet("Search"){
-            isShowSheet = it
         }
     }
 }
