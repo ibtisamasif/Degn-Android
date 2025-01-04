@@ -30,7 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,6 +57,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -67,7 +70,7 @@ fun CoinDetailScreen(
         viewModel.fetchTokenByID(viewModel.selectedCoinId.value)
         viewModel.fetchUserBalance(viewModel.selectedCoinId.value)
     }
-
+    val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     Scaffold(
         topBar = {
@@ -118,7 +121,11 @@ fun CoinDetailScreen(
                                     textColor = Color.Black,
                                     buttonColor = Green,
                                     modifier = Modifier.weight(1f),
-                                    onClick = { viewModel.buyTransaction() }
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            viewModel.buyTransaction()
+                                        }
+                                    }
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                                 BuySellButton(
@@ -134,7 +141,11 @@ fun CoinDetailScreen(
                                     textColor = Color.Black,
                                     buttonColor = Green,
                                     modifier = Modifier.fillMaxWidth(),
-                                    onClick = { viewModel.buyTransaction() }
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            viewModel.buyTransaction()
+                                        }
+                                    }
                                 )
                             }
                         }

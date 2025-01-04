@@ -2,11 +2,9 @@ package com.example.tradingapp.viewModels.home
 
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tradingapp.data.BalanceBody
-import com.example.tradingapp.data.QuoteResponse
 import com.example.tradingapp.data.TokenDetails
 import com.example.tradingapp.data.Transaction
 import com.example.tradingapp.data.TransactionRequest
@@ -22,7 +20,6 @@ import java.math.RoundingMode
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -50,8 +47,6 @@ class HomeViewModel(
 
     private val _userBalance = MutableStateFlow<BalanceBody?>(null)
     val userBalance: StateFlow<BalanceBody?> = _userBalance
-
-    val quoteLiveData = MutableLiveData<QuoteResponse>()
 
     var isTokensLoaded = false
 
@@ -96,30 +91,32 @@ class HomeViewModel(
         isLoading.value = false
     }
 
-    suspend fun fetchTransaction(offset: Int,limit: Int =100){
-        val response = pref.getAccessToken()?.let { transactionRepo.getTransactions(it,offset,limit) }
+    suspend fun fetchTransaction(offset: Int, limit: Int = 100) {
+        val response =
+            pref.getAccessToken()?.let { transactionRepo.getTransactions(it, offset, limit) }
         _transactions.value = response?.body?.tranactions
     }
 
-    fun buyTransaction() {
+    suspend fun buyTransaction() {
         transaction.value = "Buy"
-        viewModelScope.launch {
-            val request = token.value?.tokenAddress?.let { TransactionRequest(amount = "2.5", token = it) }
-            val response = pref.getAccessToken()?.let { if (request != null) { transactionRepo.buyTransaction(it, request) }
+        val request =
+            token.value?.tokenAddress?.let { TransactionRequest(amount = "2.5", token = it) }
+        val response = pref.getAccessToken()?.let {
+            if (request != null) {
+                transactionRepo.buyTransaction(it, request)
             }
             isLoading.value = false
         }
     }
 
-    fun sellTransaction() {
+    suspend fun sellTransaction() {
         transaction.value = "Sell"
-        viewModelScope.launch {
-            val request = token.value?.tokenAddress?.let { TransactionRequest(amount = "2.5", token = it) }
-            val response = pref.getAccessToken()?.let {
-                    if (request != null) {
-                        transactionRepo.sellTransaction(it, request)
-                    }
-                }
+        val request =
+            token.value?.tokenAddress?.let { TransactionRequest(amount = "2.5", token = it) }
+        val response = pref.getAccessToken()?.let {
+            if (request != null) {
+                transactionRepo.sellTransaction(it, request)
+            }
             isLoading.value = false
         }
     }
@@ -127,15 +124,6 @@ class HomeViewModel(
     suspend fun fetchUserBalance(id: String) {
         val response = pref.getAccessToken()?.let { walletRepo.getUserBalance(it, id) }
         _userBalance.value = response?.body
-    }
-
-    fun fetchQuote(inputMint: String, amount: Long) {
-        viewModelScope.launch {
-            val quote = dashboardRepo.getQuote(inputMint, amount)
-            quote?.let {
-                quoteLiveData.postValue(it)
-            }
-        }
     }
 
     private fun formatTimeDifference(isoDateString: String): String {
@@ -177,7 +165,7 @@ class HomeViewModel(
     }
 
     fun numberIntoDecimals(amount: String, decimals: Int): String {
-        var amountBig = BigDecimal(amount)
+        val amountBig = BigDecimal(amount)
         val decimalsBig = BigDecimal.TEN.pow(decimals)
         var amountFormatted = amountBig.multiply(decimalsBig)
         amountFormatted = amountFormatted.stripTrailingZeros()
@@ -186,7 +174,6 @@ class HomeViewModel(
         }
         return amountFormatted.toPlainString()
     }
-
 
     fun formatTime(inputTime: String): String {
         val instant = Instant.parse(inputTime)
