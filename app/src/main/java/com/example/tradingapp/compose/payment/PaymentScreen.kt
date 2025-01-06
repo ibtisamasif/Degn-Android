@@ -45,7 +45,7 @@ import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.Purple
 
 @Composable
-fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
+fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit ,amountString: (String) -> Unit) {
     var amount by remember { mutableStateOf("0.00") }
     var screenName by remember { mutableStateOf("") }
     Column(
@@ -94,11 +94,11 @@ fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(text = "$$amount", fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.Gray)
 
             if (title != "Send" && title != "Buy" && title != "Sell") {
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(24.dp))
                 Box(
                     modifier = Modifier
                         .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
@@ -138,7 +138,7 @@ fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 64.dp, vertical = 32.dp)
+                    .padding(horizontal = 64.dp, vertical = 16.dp)
             ) {
                 listOf("10%", "25%", "50%", "MAX").forEachIndexed { _, label ->
                     Box(
@@ -162,7 +162,7 @@ fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         NumericKeypad(onKeyPress = {key->
             amount = updateAmount(amount, key)
@@ -171,19 +171,19 @@ fun PaymentScreen(title: String, onCloseBottomSheet: (Boolean) -> Unit) {
         Row(
             modifier = Modifier
                 .weight(0.8f)
-                .padding(16.dp),
+                .padding(8.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             ConfirmationButton{
-                onCloseBottomSheet.invoke(true)
+                amountString.invoke(amount)
             }
         }
 
     }
-    if(screenName != "") BottomSheet(screenName){
+    if(screenName != "") BottomSheet(screenName = screenName, onCloseBottomSheet = {
         screenName = ""
-    }
+    }, amount = {})
 }
 
 @Composable
@@ -237,15 +237,22 @@ private fun updateAmount(currentAmount: String, key: String): String {
             if (currentAmount.isNotEmpty()) currentAmount.dropLast(1).ifEmpty { "0" } else "0"
         }
         "." -> {
-            if (currentAmount.contains(".")) {
-                currentAmount.replace(".", "") + "."
+            if (currentAmount.isEmpty()) {
+                "0."
+            } else if (currentAmount.contains(".")) {
+                currentAmount
             } else {
                 "$currentAmount."
             }
         }
         else -> {
-            if (currentAmount == "0.00") key else currentAmount + key
+            if (currentAmount == "0" || currentAmount == "0.00") {
+                if (key == "0") "0" else key
+            } else {
+                currentAmount + key
+            }
         }
-    }.trimStart('0').ifEmpty { "0.00" }
+    }
 }
+
 

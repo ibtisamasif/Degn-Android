@@ -15,22 +15,44 @@ import com.example.tradingapp.compose.support.SupportScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(screenName: String, onCloseBottomSheet: (Boolean) -> Unit) {
-    val bottomSheetState =
-        rememberModalBottomSheetState(skipPartiallyExpanded = true)
+fun BottomSheet(screenName: String, onCloseBottomSheet: (Boolean) -> Unit, amount: (String) -> Unit) {
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { false }
+    )
 
     ModalBottomSheet(
         sheetState = bottomSheetState,
-        onDismissRequest = { onCloseBottomSheet.invoke(false) },
+        onDismissRequest = {},
         containerColor = Color.White
     ) {
         when (screenName) {
             "Gain" -> GainsScreen { onCloseBottomSheet.invoke(!it) }
-            "Send" -> PaymentScreen("Send") { onCloseBottomSheet.invoke(!it) }
-            "Withdraw" -> PaymentScreen("Withdraw") { onCloseBottomSheet.invoke(!it) }
-            "Deposit" -> PaymentScreen("Deposit") { onCloseBottomSheet.invoke(!it) }
-            "Buy" -> PaymentScreen("Buy") { onCloseBottomSheet.invoke(!it) }
-            "Sell" -> PaymentScreen("Sell") { onCloseBottomSheet.invoke(!it) }
+            "Send" -> PaymentScreen(
+                title = "Send",
+                onCloseBottomSheet = { onCloseBottomSheet.invoke(!it) },
+                amountString = {}
+            )
+            "Withdraw" -> PaymentScreen(
+                title = "Withdraw",
+                onCloseBottomSheet = { onCloseBottomSheet.invoke(!it) },
+                amountString = {}
+            )
+            "Deposit" -> PaymentScreen(
+                title = "Deposit",
+                onCloseBottomSheet = { onCloseBottomSheet.invoke(!it) },
+                amountString = {}
+            )
+            "Buy" -> PaymentScreen(
+                title = "Buy",
+                onCloseBottomSheet = { onCloseBottomSheet.invoke(!it) },
+                amountString = { amount.invoke(it) }
+            )
+            "Sell" -> PaymentScreen(
+                title = "Sell",
+                onCloseBottomSheet = { onCloseBottomSheet.invoke(!it) },
+                amountString = { amount.invoke(it) }
+            )
             "Support" -> SupportScreen { onCloseBottomSheet.invoke(!it) }
             "Search" -> SearchScreen { onCloseBottomSheet.invoke(!it) }
             "CashMini" -> CashMiniScreen { onCloseBottomSheet.invoke(!it) }

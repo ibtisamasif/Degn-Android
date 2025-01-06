@@ -26,7 +26,7 @@ class WalletRepo(private val apiService: ApiService) {
         }
     }
 
-    suspend fun getUserBalance(token: String, tokenId: String? = null): UserBalanceResponse? {
+    suspend fun getUserBalance(token: String): UserBalanceResponse? {
         val response = apiService.getUserBalance("Bearer $token")
         return if (response.isSuccessful) {
             response.body()
@@ -34,4 +34,14 @@ class WalletRepo(private val apiService: ApiService) {
             null
         }
     }
+
+    suspend fun getUserTokenBalance(token: String, tokenId: String): UserBalanceResponse? {
+        val response = apiService.getUserTokenBalance("Bearer $token",tokenId)
+        return if (response.isSuccessful) {
+            response.body()
+        } else {
+            null
+        }
+    }
+
 }

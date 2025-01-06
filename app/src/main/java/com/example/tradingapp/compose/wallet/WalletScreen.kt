@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,9 +55,11 @@ fun WalletScreen(
 ) {
     LaunchedEffect(Unit) {
         viewModel.getUserDetail()
+        viewModel.fetchUserBalance()
     }
     var openSheet by remember { mutableStateOf(false) }
     var sheetName by remember { mutableStateOf("") }
+    val userBalance by viewModel.userBalance.collectAsState()
     TradingAppTheme {
         Scaffold(
             topBar = {
@@ -120,7 +123,7 @@ fun WalletScreen(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "0.01 USD",
+                    text = if(userBalance?.totalBalance != null) "${userBalance?.totalBalance?.let { String.format("%.2f", it) }} USD" else "",
                     style = MaterialTheme.typography.titleLarge,
                 )
 
@@ -241,13 +244,13 @@ fun WalletScreen(
                     }
                 }
                 if (openSheet) {
-                    BottomSheet(sheetName) {
+                    BottomSheet(screenName = sheetName,  onCloseBottomSheet = {
                         when(sheetName){
                             "Deposit" -> onItemSelected.invoke("Buy")
                             "Withdraw" -> onItemSelected.invoke("Sell")
                         }
                         openSheet = it
-                    }
+                    }, amount = {viewModel.setAmount(it)})
                 }
             }
         }

@@ -113,6 +113,11 @@ interface ApiService {
     @GET("user/balance")
     suspend fun getUserBalance(
         @Header("Authorization") token: String,
+    ): Response<UserBalanceResponse>
+
+    @GET("user/balance")
+    suspend fun getUserTokenBalance(
+        @Header("Authorization") token: String,
         @Query("tokenId") tokenId: String? = null
     ): Response<UserBalanceResponse>
 

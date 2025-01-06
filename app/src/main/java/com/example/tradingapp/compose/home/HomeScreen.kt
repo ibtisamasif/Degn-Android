@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +65,7 @@ fun HomeScreen(
 ) {
     LaunchedEffect(Unit) {
         if(!viewModel.isTokensLoaded) {
+            viewModel.fetchBalance()
             viewModel.fetchTokens()
             viewModel.fetchSpotlightTokens()
             viewModel.isTokensLoaded = true
@@ -95,7 +97,7 @@ fun HomeScreen(
                     .padding(horizontal = 16.dp)
             ) {
                 if (isHome) {
-                    BalanceSection()
+                    BalanceSection(viewModel = viewModel)
                 }
                 Spacer(modifier = Modifier.height(if (isHome) 16.dp else 12.dp))
                 SpotlightSection(viewModel = viewModel)
@@ -127,15 +129,16 @@ fun HomeScreen(
         if (viewModel.isLoading.value) {
             CircularProgress()
         }
-        if (isShowSheet) BottomSheet("Search") {
+        if (isShowSheet) BottomSheet(screenName = "Search", onCloseBottomSheet =  {
             isShowSheet = it
-        }
+        },amount = {})
     }
 
 }
 
 @Composable
-fun BalanceSection() {
+fun BalanceSection(viewModel: HomeViewModel) {
+    val balance = viewModel.userBalance.collectAsState().value
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -144,7 +147,7 @@ fun BalanceSection() {
     ) {
         Text("Total balance", style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("0.00 USD", style = MaterialTheme.typography.titleLarge)
+        Text(text = if(balance?.totalBalance != null) "${balance.totalBalance?.let { String.format("%.2f", it) }} USD" else "", style = MaterialTheme.typography.titleLarge)
     }
 }
 

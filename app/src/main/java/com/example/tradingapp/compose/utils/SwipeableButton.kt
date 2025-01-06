@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tradingapp.R
+import com.example.tradingapp.ui.theme.Green
 import com.example.tradingapp.ui.theme.Grey
 import com.example.tradingapp.ui.theme.Purple
 import kotlin.math.roundToInt
@@ -56,49 +58,59 @@ fun ConfirmationButton(
             .height(45.dp)
             .width(87.dp)
             .background(
-                color = Grey,
+                color = if (progress >= 0.8f) Purple else Grey,
                 shape = RoundedCornerShape(cornerRadius)
             ),
     ) {
-        Column(
-            Modifier
-                .align(Alignment.Center)
-                .alpha(1f - progress),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Swipe to Start",
+        if(progress >= 0.85f){
+            CircularProgressIndicator(
                 color = Color.White,
-                fontSize = 12.sp
+                strokeWidth = 4.dp,
+                modifier = Modifier.size(32.dp).align(Alignment.Center)
+            )
+            onConfirm()
+        }else{
+            Column(
+                Modifier
+                    .align(Alignment.Center)
+                    .alpha(1f - progress),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Swipe to Start",
+                    color = Color.White,
+                    fontSize = 12.sp
+                )
+            }
+
+            DraggableControl(
+                modifier = Modifier
+                    .offset {
+                        IntOffset(dragOffset.floatValue.roundToInt(), 0)
+                    }
+                    .size(87.dp, 45.dp)
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .draggable(
+                        orientation = Orientation.Horizontal,
+                        state = rememberDraggableState { delta ->
+                            dragOffset.floatValue =
+                                (dragOffset.floatValue + delta).coerceIn(0f, maxDragPx)
+                        },
+                        onDragStopped = {
+                            if (progress >= 0.8f) {
+                                dragOffset.floatValue = maxDragPx
+                                onConfirm()
+                            } else {
+                                dragOffset.floatValue = 0f
+                            }
+                        }
+                    ),
+                progress = progress
             )
         }
-
-        DraggableControl(
-            modifier = Modifier
-                .offset {
-                    IntOffset(dragOffset.floatValue.roundToInt(), 0)
-                }
-                .size(87.dp,45.dp)
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(cornerRadius)
-                )
-                .draggable(
-                    orientation = Orientation.Horizontal,
-                    state = rememberDraggableState { delta ->
-                        dragOffset.floatValue = (dragOffset.floatValue + delta).coerceIn(0f, maxDragPx)
-                    },
-                    onDragStopped = {
-                        if (progress >= 0.8f) {
-                            dragOffset.floatValue = maxDragPx
-                            onConfirm.invoke()
-                        } else {
-                            dragOffset.floatValue = 0f
-                        }
-                    }
-                ),
-            progress = progress
-        )
     }
 }
 
@@ -122,13 +134,7 @@ private fun DraggableControl(
         contentAlignment = Alignment.Center
     ) {
         Crossfade(targetState = progress >= 0.8f, label = "") { isConfirmed ->
-            if (isConfirmed) {
-                Icon(
-                    imageVector = Icons.Filled.Done,
-                    contentDescription = "Confirm Icon",
-                    tint = Color.White
-                )
-            } else {
+            if (!isConfirmed) {
                 Image(
                     painter = painterResource(id = R.drawable.double_arrow),
                     contentDescription = "Confirm Icon",

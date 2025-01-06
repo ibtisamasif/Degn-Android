@@ -68,7 +68,7 @@ fun CoinDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.isLoading.value = true
         viewModel.fetchTokenByID(viewModel.selectedCoinId.value)
-        viewModel.fetchUserBalance(viewModel.selectedCoinId.value)
+        viewModel.fetchUserTokenBalance(viewModel.selectedCoinId.value)
     }
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
@@ -107,24 +107,23 @@ fun CoinDetailScreen(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    val balance = viewModel.userBalance.collectAsState().value
+                    val balance = viewModel.userTokenBalance.collectAsState()
+                    val tokenBalance = viewModel.tokenBalance.collectAsState()
 
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                     ) {
-                        balance?.let {
-                            if (it.cashBalance > 0) {
+                        balance.value.let {
+                            if (tokenBalance.value != null) {
                                 BuySellButton(
                                     buttonText = "Buy",
                                     textColor = Color.Black,
                                     buttonColor = Green,
                                     modifier = Modifier.weight(1f),
                                     onClick = {
-                                        coroutineScope.launch {
-                                            viewModel.buyTransaction()
-                                        }
+                                        viewModel.transaction.value = "Buy"
                                     }
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
@@ -133,7 +132,7 @@ fun CoinDetailScreen(
                                     textColor = Color.White,
                                     buttonColor = Red,
                                     modifier = Modifier.weight(1f),
-                                    onClick = { viewModel.sellTransaction() }
+                                    onClick = {viewModel.transaction.value = "Sell"}
                                 )
                             } else {
                                 BuySellButton(
@@ -142,14 +141,16 @@ fun CoinDetailScreen(
                                     buttonColor = Green,
                                     modifier = Modifier.fillMaxWidth(),
                                     onClick = {
-                                        coroutineScope.launch {
-                                            viewModel.buyTransaction()
+                                        if(balance.value?.cashBalance!! > 0) {
+                                            viewModel.transaction.value = "Buy"
                                         }
                                     }
                                 )
                             }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
@@ -159,9 +160,13 @@ fun CoinDetailScreen(
     }
 
     if(viewModel.transaction.value != ""){
-        BottomSheet(screenName = viewModel.transaction.value) {
-            viewModel.transaction.value = ""
-        }
+        BottomSheet(screenName = viewModel.transaction.value, onCloseBottomSheet =  {
+            viewModel.transaction.value = "" }, amount = {amount ->
+            coroutineScope.launch {
+                if(viewModel.transaction.value == "Buy") viewModel.buyTransaction(amount)
+                else viewModel.sellTransaction(amount)
+            }
+        })
     }
 
 }
@@ -277,6 +282,8 @@ fun setupChart(chart: LineChart, lineData: LineData) {
 fun BalanceDetail(
     viewModel: HomeViewModel
 ) {
+    val tokenBalance = viewModel.tokenBalance.collectAsState()
+    val tokenQuantity = viewModel.tokenQuantity.collectAsState()
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -299,7 +306,9 @@ fun BalanceDetail(
                 ) {
                     Text("Value", style = MaterialTheme.typography.labelMedium)
                     Text(
-                        "0.01 USD",
+                        text = if(tokenBalance.value != null) "${tokenBalance.value?.toDoubleOrNull()?.let {
+                            String.format("%.4f", it)
+                        }} USD" else "0.00 USD",
                         style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp)
                     )
                 }
@@ -307,7 +316,9 @@ fun BalanceDetail(
                     modifier = Modifier.padding(start = 16.dp)
                 ) {
                     Text("Quantity", style = MaterialTheme.typography.labelMedium)
-                    Text("0", style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp))
+                    Text(text = if(tokenQuantity.value != null) "${tokenQuantity.value?.toDoubleOrNull()?.let {
+                        String.format("%.4f", it)
+                    }}" else "0", style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp))
                 }
             }
         }

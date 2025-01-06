@@ -24,7 +24,7 @@ class WalletViewModel(
 
     fun fetchUserBalance() {
         viewModelScope.launch {
-            val response = pref.getAccessToken()?.let { walletRepo.getUserBalance(it, null)}
+            val response = pref.getAccessToken()?.let { walletRepo.getUserBalance(it)}
             _userBalance.value = response?.body
         }
     }
@@ -32,5 +32,9 @@ class WalletViewModel(
     fun getUserDetail(){
         userName = pref.getString(KEY_LOGIN_NAME)
         profileImage = pref.getString(CONST_IMAGE_URL)
+    }
+
+    fun setAmount(amount: String){
+        pref.put("Amount",amount);
     }
 }

@@ -166,9 +166,9 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "v1.5", color = Color.Gray, fontSize = 12.sp)
             }
-            if (isShowSheet) BottomSheet("Support") {
+            if (isShowSheet) BottomSheet(screenName = "Support", onCloseBottomSheet =  {
                 isShowSheet = it
-            }
+            }, amount = {})
         }
     }
 }

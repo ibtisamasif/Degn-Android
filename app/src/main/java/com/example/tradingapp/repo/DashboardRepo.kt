@@ -5,7 +5,7 @@ import com.example.tradingapp.api.QuoteApiService
 import com.example.tradingapp.data.QuoteResponse
 import com.example.tradingapp.data.TokenResponse
 import com.example.tradingapp.data.TokensResponse
-import com.example.tradingapp.utils.Constants.Companion.OUTPUT_MINT
+import com.example.tradingapp.utils.Constants.Companion.INPUT_MINT
 
 class DashboardRepo(
     private val apiService: ApiService,
@@ -29,8 +29,8 @@ class DashboardRepo(
         }
     }
 
-    suspend fun getTokenById(token: String,id: String): TokenResponse? {
-        val response = apiService.getTokenById(id,"Bearer $token")
+    suspend fun getTokenById(token: String, id: String): TokenResponse? {
+        val response = apiService.getTokenById(id, "Bearer $token")
         return if (response.isSuccessful) {
             response.body()
         } else {
@@ -39,11 +39,11 @@ class DashboardRepo(
     }
 
     suspend fun getQuote(
-        inputMint: String,
+        outputMint: String,
         amount: Long,
     ): QuoteResponse? {
         return try {
-            val response = quoteApiService.getQuote(inputMint, OUTPUT_MINT, amount, 1000)
+            val response = quoteApiService.getQuote(INPUT_MINT, outputMint, amount, 1000)
             if (response.isSuccessful) {
                 response.body()
             } else {

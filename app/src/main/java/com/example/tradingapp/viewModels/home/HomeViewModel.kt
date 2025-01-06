@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tradingapp.data.BalanceBody
+import com.example.tradingapp.data.TokenAccount
 import com.example.tradingapp.data.TokenDetails
 import com.example.tradingapp.data.Transaction
 import com.example.tradingapp.data.TransactionRequest
@@ -45,6 +46,9 @@ class HomeViewModel(
     private val _transactions = MutableStateFlow<List<Transaction>?>(null)
     val transactions: StateFlow<List<Transaction>?> = _transactions
 
+    private val _userTokenBalance = MutableStateFlow<BalanceBody?>(null)
+    val userTokenBalance: StateFlow<BalanceBody?> = _userTokenBalance
+
     private val _userBalance = MutableStateFlow<BalanceBody?>(null)
     val userBalance: StateFlow<BalanceBody?> = _userBalance
 
@@ -53,10 +57,20 @@ class HomeViewModel(
     val offset = mutableIntStateOf(0)
     val selectedCoinId = mutableStateOf("")
     val tokenCreationDate = mutableStateOf("")
+    private val _tokenBalance = MutableStateFlow<String?>(null)
+    private val _tokenQuantity = MutableStateFlow<String?>(null)
+    val tokenBalance: StateFlow<String?> = _tokenBalance
+    val tokenQuantity: StateFlow<String?> = _tokenQuantity
     private val limit = 10
 
     private var allTokensLoaded = mutableStateOf(false)
     var newItemLoaded = mutableStateOf(false)
+    fun fetchUserBalance() {
+        viewModelScope.launch {
+            val response = pref.getAccessToken()?.let { walletRepo.getUserBalance(it)}
+            _userBalance.value = response?.body
+        }
+    }
 
     fun fetchTokens() {
         if (allTokensLoaded.value) return
@@ -97,32 +111,51 @@ class HomeViewModel(
         _transactions.value = response?.body?.tranactions
     }
 
-    suspend fun buyTransaction() {
-        transaction.value = "Buy"
-        val request =
-            token.value?.tokenAddress?.let { TransactionRequest(amount = "2.5", token = it) }
-        val response = pref.getAccessToken()?.let {
+    suspend fun buyTransaction(amount: String) {
+        val request = token.value?.tokenAddress?.let { tokenAddress ->
+            TransactionRequest(amount = amount, token = tokenAddress)
+        }
+        val response = pref.getAccessToken()?.let { accessToken ->
             if (request != null) {
-                transactionRepo.buyTransaction(it, request)
+                transactionRepo.buyTransaction(accessToken, request)
+//                fetchUserTokenBalance(selectedCoinId.value)
+                transaction.value = ""
             }
-            isLoading.value = false
         }
     }
 
-    suspend fun sellTransaction() {
-        transaction.value = "Sell"
+    suspend fun sellTransaction(amount: String) {
         val request =
-            token.value?.tokenAddress?.let { TransactionRequest(amount = "2.5", token = it) }
+            token.value?.tokenAddress?.let { TransactionRequest(amount = amount, token = it) }
         val response = pref.getAccessToken()?.let {
             if (request != null) {
                 transactionRepo.sellTransaction(it, request)
+                transaction.value = ""
             }
-            isLoading.value = false
         }
     }
 
-    suspend fun fetchUserBalance(id: String) {
-        val response = pref.getAccessToken()?.let { walletRepo.getUserBalance(it, id) }
+    private fun checkTokenBalance(listTokenAccount: List<TokenAccount>) {
+        val isTokenPresent = listTokenAccount.find { it.mintAddress == token.value?.tokenAddress }
+        if (isTokenPresent != null) {
+            _tokenBalance.value = isTokenPresent.valueInUSD.toString()
+            _tokenQuantity.value = isTokenPresent.balance.toString()
+        }else{
+            _tokenBalance.value = null
+            _tokenQuantity.value = null
+        }
+    }
+
+
+    suspend fun fetchUserTokenBalance(id: String) {
+        val response = pref.getAccessToken()?.let { walletRepo.getUserTokenBalance(it, id) }
+        _userTokenBalance.value = response?.body
+        response?.body?.tokenAccounts?.let { checkTokenBalance(it) }
+        isLoading.value = false
+    }
+
+    suspend fun fetchBalance() {
+        val response = pref.getAccessToken()?.let { walletRepo.getUserBalance(it) }
         _userBalance.value = response?.body
     }
 
@@ -164,7 +197,7 @@ class HomeViewModel(
         }
     }
 
-    fun numberIntoDecimals(amount: String, decimals: Int): String {
+    private fun numberIntoDecimals(amount: String, decimals: Int): String {
         val amountBig = BigDecimal(amount)
         val decimalsBig = BigDecimal.TEN.pow(decimals)
         var amountFormatted = amountBig.multiply(decimalsBig)
@@ -173,6 +206,11 @@ class HomeViewModel(
             amountFormatted = amountFormatted.setScale(0, RoundingMode.DOWN)
         }
         return amountFormatted.toPlainString()
+    }
+
+    suspend fun getQuote(){
+//        val response = token.value?.let {it-> dashboardRepo.getQuote(it.tokenAddress,
+//            tokenBalance.value?.let { it1 -> numberIntoDecimals(it1,it.decimals) }) }
     }
 
     fun formatTime(inputTime: String): String {

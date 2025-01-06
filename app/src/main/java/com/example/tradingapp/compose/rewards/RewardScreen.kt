@@ -133,9 +133,9 @@ fun RewardScreen(onItemSelected: (String) -> Unit) {
 
             }
         }
-        if (isShowSheet) BottomSheet("Search") {
+        if (isShowSheet) BottomSheet(screenName = "Search", onCloseBottomSheet =  {
             isShowSheet = it
-        }
+        }, amount = {})
     }
 }
 

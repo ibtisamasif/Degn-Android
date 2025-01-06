@@ -78,9 +78,9 @@ fun ExportKeysScreen(
             }
         }
 
-        if (viewModel.isShowSecretKey.value) BottomSheet("SecretKey"){
+        if (viewModel.isShowSecretKey.value) BottomSheet(screenName = "SecretKey", onCloseBottomSheet = {
            if(it) viewModel.isShowSecretKey.value = false
-        }
+        }, amount = {})
     }
 }
 
