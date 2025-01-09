@@ -251,7 +251,7 @@ class DegnSharedPref(val pref: SharedPreferences) {
         clear()
     }
 
-    fun clear() {
+    private fun clear() {
         doEdit()
         remove(KEY_LOGIN_ID)
         remove(KEY_LOGIN_ROLE)

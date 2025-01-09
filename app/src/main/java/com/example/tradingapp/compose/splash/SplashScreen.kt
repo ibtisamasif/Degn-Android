@@ -50,7 +50,9 @@ fun SplashScreen(
 
     LaunchedEffect(true) {
         delay(2000)
-        if(viewModel.isUserLogin()) navController.navigate(Screens.HomeScreen.route)
+        if(viewModel.isUserLogin()){
+            navController.navigate(Screens.EmailScreen.route)
+        }
         else navController.navigate(Screens.SliderScreen.route)
     }
 

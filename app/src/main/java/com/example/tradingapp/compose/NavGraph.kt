@@ -18,6 +18,7 @@ import com.example.tradingapp.compose.rewards.RewardScreen
 import com.example.tradingapp.compose.setting.SettingsScreen
 import com.example.tradingapp.compose.slider.SliderScreen
 import com.example.tradingapp.compose.support.LegalAndPrivacy
+import com.example.tradingapp.compose.utils.GlobalNavController
 import com.example.tradingapp.compose.wallet.WalletScreen
 import com.example.tradingapp.data.Screens
 import com.example.tradingapp.utils.BiometricPromptManager
@@ -25,6 +26,7 @@ import com.example.tradingapp.utils.BiometricPromptManager
 @Composable
 fun NavController(activity: MainActivity, promptManager: BiometricPromptManager,openMoonPaySDK: (String)-> Unit) {
     val navController = rememberNavController()
+    GlobalNavController.navController = navController
     NavHost(
         navController = navController,
         startDestination = Screens.SplashScreen.route,
@@ -41,8 +43,11 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager,
 
         composable(route = Screens.EmailScreen.route) {
             EmailScreen(true, promptManager) {
-                if(it=="Back") navController.navigateUp()
-                else navController.navigate(Screens.OTPScreen.route)
+                when(it){
+                    "Biometric"-> navController.navigate(Screens.HomeScreen.route)
+                    "Back"-> navController.navigateUp()
+                    else ->  navController.navigate(Screens.OTPScreen.route)
+                }
             }
         }
 

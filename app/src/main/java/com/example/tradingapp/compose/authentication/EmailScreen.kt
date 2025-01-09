@@ -172,13 +172,14 @@ fun EmailScreen(
             }
         }
 
-        if (viewModel.showBiometric) {
+        if (viewModel.isUserLogin()) {
             BiometricAuthContent(
                 biometricResult = biometricResult,
                 promptManager = promptManager,
                 count = count.intValue
             ) {
                 count.intValue = it
+                onButtonClick.invoke("Biometric")
             }
         }
     }

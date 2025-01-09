@@ -200,7 +200,7 @@ fun CoinHeader(
         Spacer(modifier = Modifier.height(4.dp))
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                "$" + "%.6f".format(token?.marketCap?.quote?.toDoubleOrNull() ?: 0.0),
+                "$" + "%.6f".format(token?.marketCap?.toDoubleOrNull() ?: 0.0),
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp)
             )
             Row {

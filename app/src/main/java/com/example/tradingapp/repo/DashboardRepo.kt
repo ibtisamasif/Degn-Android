@@ -9,13 +9,15 @@ import com.example.tradingapp.utils.Constants.Companion.INPUT_MINT
 
 class DashboardRepo(
     private val apiService: ApiService,
-    private val quoteApiService: QuoteApiService
+    private val quoteApiService: QuoteApiService,
+    private val mainRepo: MainRepo
 ) {
     suspend fun getSpotlightTokens(token: String, offset: Int, limit: Int): TokensResponse? {
         val response = apiService.getSpotlightTokens("Bearer $token", offset, limit)
         return if (response.isSuccessful) {
             response.body()
         } else {
+            if (mainRepo.handleApiError(response)) return null
             null
         }
     }
@@ -25,6 +27,7 @@ class DashboardRepo(
         return if (response.isSuccessful) {
             response.body()
         } else {
+            if (mainRepo.handleApiError(response)) return null
             null
         }
     }
@@ -34,6 +37,7 @@ class DashboardRepo(
         return if (response.isSuccessful) {
             response.body()
         } else {
+            if (mainRepo.handleApiError(response)) return null
             null
         }
     }

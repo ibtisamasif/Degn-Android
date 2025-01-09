@@ -9,19 +9,19 @@ data class TokenDetails(
     val decimals: Int,
     val image: String,
     val tokenAddress: String,
-    val marketCap: MarketCap,
-    val tokenCreatedAt: String,
+    val marketCap: String,
+    val tokenCreatedAt: String?,
     val isPartOfToken: Boolean,
     val createdAt: String,
     val updatedAt: String,
     val isSpotlight: Boolean,
     val isActive: Boolean,
-    val __v: Int
-)
-
-data class MarketCap(
-    val quote: String,
-    val usd: String
+    val __v: Int,
+    val holder: String,
+    val price: String,
+    val priceChange24h: String,
+    val supply: String,
+    val volume: String
 )
 
 data class TokensResponse(

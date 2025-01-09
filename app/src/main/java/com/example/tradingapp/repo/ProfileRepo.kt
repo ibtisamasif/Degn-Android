@@ -5,12 +5,13 @@ import com.example.tradingapp.data.ProfileResponse
 import com.example.tradingapp.data.UpdateProfileRequest
 import okhttp3.MultipartBody
 
-class ProfileRepo(private val apiService: ApiService) {
+class ProfileRepo(private val apiService: ApiService,private val mainRepo: MainRepo) {
     suspend fun fetchUserProfile(token: String): ProfileResponse? {
         val response = apiService.getProfile("Bearer $token")
         return if (response.isSuccessful) {
             response.body()
         } else {
+            if(mainRepo.handleApiError(response)) return null
             null
         }
     }
@@ -20,6 +21,7 @@ class ProfileRepo(private val apiService: ApiService) {
         return if (response.isSuccessful) {
             response.body()
         } else {
+            if(mainRepo.handleApiError(response)) return null
             null
         }
     }
@@ -29,6 +31,7 @@ class ProfileRepo(private val apiService: ApiService) {
         return if (response.isSuccessful) {
             response.body()
         } else {
+            if(mainRepo.handleApiError(response)) return null
             null
         }
     }
@@ -36,11 +39,13 @@ class ProfileRepo(private val apiService: ApiService) {
     suspend fun deleteUserAccount(token: String): Boolean {
         return try {
             val response = apiService.deleteUserAccount(token)
+            if (mainRepo.handleApiError(response)) return false
             response.isSuccessful
         } catch (e: Exception) {
             e.printStackTrace()
             false
         }
     }
+
 
 }

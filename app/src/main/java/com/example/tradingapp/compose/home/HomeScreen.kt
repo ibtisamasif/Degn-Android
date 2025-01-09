@@ -156,7 +156,7 @@ fun BalanceSection(viewModel: HomeViewModel) {
 fun SpotlightSection(viewModel: HomeViewModel) {
     val tokens = viewModel.spotlightTokens.value ?: emptyList()
     if (tokens.isNotEmpty()) {
-        val firstToken = tokens[1]
+        val firstToken = tokens[0]
 
         Card(
             shape = RoundedCornerShape(21.5.dp),
@@ -230,7 +230,7 @@ fun SpotlightSection(viewModel: HomeViewModel) {
                                 style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp)
                             )
                             Text(
-                                text = "$" + "%.2f".format(firstToken.marketCap.quote.toDouble()),
+                                text = "$" + "%.2f".format(firstToken.price.toDouble()),
                                 style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp)
                             )
                         }
@@ -267,8 +267,8 @@ fun ListSection(
                 id = list[index]._id,
                 image = list[index].image,
                 name = list[index].name,
-                price = "$" + "%.2f".format(list[index].marketCap.quote.toDouble()),
-                marketCap = "$${list[index].marketCap.usd.toDouble().roundToInt()} MKT CAP",
+                price = "$" + "%.2f".format(list[index].price.toDouble()),
+                marketCap = "$${list[index].marketCap.toDouble().roundToInt()} MKT CAP",
                 isPositive = index % 2 == 0,
                 viewModel = viewModel,
                 onItemSelected = onItemSelected

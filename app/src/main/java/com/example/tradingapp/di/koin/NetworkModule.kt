@@ -13,7 +13,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 val networkModule = module {
-    // Configure OkHttpClient with a 5-minute timeout
     single {
         OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
@@ -28,9 +27,8 @@ val networkModule = module {
     // BaseRetrofit configuration
     single(named("BaseRetrofit")) {
         Retrofit.Builder()
-//            .baseUrl("http://192.168.10.48:8081/api/v1/")
-            .baseUrl(BASE_URL) // Uncomment if using constant
-            .client(get<OkHttpClient>()) // Use the custom OkHttpClient
+            .baseUrl(BASE_URL)
+            .client(get<OkHttpClient>())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
