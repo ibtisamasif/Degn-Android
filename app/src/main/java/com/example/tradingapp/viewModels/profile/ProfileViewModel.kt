@@ -16,6 +16,7 @@ import com.example.tradingapp.di.pref.DegnSharedPref.Companion.CONST_IMAGE_URL
 import com.example.tradingapp.di.pref.DegnSharedPref.Companion.JOINED_AT
 import com.example.tradingapp.di.pref.DegnSharedPref.Companion.KEY_LOGIN_EMAIL
 import com.example.tradingapp.di.pref.DegnSharedPref.Companion.KEY_LOGIN_NAME
+import com.example.tradingapp.di.pref.DegnSharedPref.Companion.REFERRAL_CODE
 import com.example.tradingapp.di.pref.DegnSharedPref.Companion.WALLET_KEY
 import com.example.tradingapp.repo.ProfileRepo
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +40,7 @@ class ProfileViewModel(
     var email = mutableStateOf("")
     var username = mutableStateOf("")
     var image = mutableStateOf("")
+    private var referralCode = mutableStateOf("")
     val imageUri = mutableStateOf<Uri?>(null)
     val isLoading = mutableStateOf(true)
     var joinedAt = ""
@@ -50,6 +52,7 @@ class ProfileViewModel(
                 email.value = response?.body?.user?.email.toString()
                 username.value = _userProfile.value?.userName.toString()
                 image.value = _userProfile.value?.profileUrl.toString()
+                referralCode.value = _userProfile.value?.referralCode.toString()
                 val zonedDateTime = ZonedDateTime.parse(_userProfile.value?.createdAt)
                 val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
                 joinedAt = zonedDateTime.format(formatter)
@@ -60,6 +63,8 @@ class ProfileViewModel(
                 pref.put(WALLET_KEY, _userProfile.value?.walletInfo?.turnKeyWalletId.toString())
                 pref.put(CONST_IMAGE_URL, _userProfile.value?.profileUrl.toString())
                 pref.put(JOINED_AT, joinedAt)
+                if (referralCode.value.isNullOrEmpty()) pref.put(REFERRAL_CODE, "12345")
+                else pref.put(REFERRAL_CODE, _userProfile.value?.referralCode.toString())
             } catch (e: Exception) {
                 Log.e("error", e.message.toString())
                 isLoading.value = false

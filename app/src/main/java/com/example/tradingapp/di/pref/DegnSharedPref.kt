@@ -277,6 +277,7 @@ class DegnSharedPref(val pref: SharedPreferences) {
         const val CONST_ARRAYLIST = "arrayList"
         const val CONST_SELECTED_URL = "selectedURL"
         const val CONST_IMAGE_URL = "imageURL"
+        const val REFERRAL_CODE = "referralCode"
         const val JOINED_AT = "joinedDate"
 
         // Sharedpref file name

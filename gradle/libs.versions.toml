@@ -4,6 +4,7 @@ appcompat = "1.7.0"
 biometric = "1.2.0"
 biometricVersion = "1.1.0"
 coilCompose = "2.2.2"
+coilSvgVersion = "2.4.0"
 converterGson = "2.9.0"
 gson = "2.10.1"
 koinAndroid = "4.0.1-RC1"
@@ -31,6 +32,7 @@ androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "b
 androidx-biometric-v110 = { module = "androidx.biometric:biometric", version.ref = "biometricVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+coil-kt-coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coilSvgVersion" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

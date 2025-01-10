@@ -6,6 +6,8 @@ import com.example.tradingapp.data.MoonPaySignatureResponse
 import com.example.tradingapp.data.OtpResponse
 import com.example.tradingapp.data.ProfileResponse
 import com.example.tradingapp.data.ResendOtp
+import com.example.tradingapp.data.SellRequest
+import com.example.tradingapp.data.SellResponse
 import com.example.tradingapp.data.TokenResponse
 import com.example.tradingapp.data.TokensResponse
 import com.example.tradingapp.data.TransactionRequest
@@ -137,7 +139,7 @@ interface ApiService {
     @POST("transaction/sell")
     suspend fun sellTransaction(
         @Header("Authorization") token: String,
-        @Body request: TransactionRequest
-    ): Response<TransactionResponse>
+        @Body request: SellRequest
+    ): Response<SellResponse>
 
 }

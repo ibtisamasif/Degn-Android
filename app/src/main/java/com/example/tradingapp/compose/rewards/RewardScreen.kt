@@ -1,5 +1,7 @@
 package com.example.tradingapp.compose.rewards
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -35,10 +38,19 @@ import com.example.tradingapp.compose.BottomNavigationBar
 import com.example.tradingapp.compose.utils.BottomSheet
 import com.example.tradingapp.compose.utils.CustomizedButton
 import com.example.tradingapp.compose.utils.TopBar
+import com.example.tradingapp.di.pref.DegnSharedPref
+import com.example.tradingapp.di.pref.DegnSharedPref.Companion.PREF_NAME
+import com.example.tradingapp.di.pref.DegnSharedPref.Companion.REFERRAL_CODE
 import com.example.tradingapp.ui.theme.TradingAppTheme
 
 @Composable
 fun RewardScreen(onItemSelected: (String) -> Unit) {
+    val context = LocalContext.current
+    val pref = remember {
+        val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        DegnSharedPref(sharedPreferences)
+    }
+    Toast.makeText(context, pref.getString(REFERRAL_CODE).toString(), Toast.LENGTH_SHORT).show()
     var isShowSheet by remember { mutableStateOf(false) }
     TradingAppTheme {
         Scaffold(
@@ -116,7 +128,20 @@ fun RewardScreen(onItemSelected: (String) -> Unit) {
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                CustomizedButton("Invite", 16, R.drawable.share) { }
+                CustomizedButton("Invite", 16, R.drawable.share) {
+                    val referralCode = pref.getString(REFERRAL_CODE).toString()
+                    val referralLink = "http://localhost:8080/referral/$referralCode"
+
+                    val shareIntent = android.content.Intent().apply {
+                        action = android.content.Intent.ACTION_SEND
+                        putExtra(android.content.Intent.EXTRA_TEXT, "Check out this app and start trading: $referralLink")
+                        type = "text/plain"
+                    }
+
+                    context.startActivity(
+                        android.content.Intent.createChooser(shareIntent, "Share via")
+                    )
+                }
 
                 Text(
                     text = buildAnnotatedString {

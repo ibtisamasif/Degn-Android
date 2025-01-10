@@ -4,11 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,15 +23,23 @@ import com.example.tradingapp.R
 import com.example.tradingapp.ui.theme.TradingAppTheme
 
 @Composable
-fun Title(title: String, isBottomSheet: Boolean = false, onBackPress: () -> Unit) {
+fun Title(title: String, isBottomSheet: Boolean = false, onBackPress: (String) -> Unit) {
     TradingAppTheme {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            if (!isBottomSheet) {
-                Box(modifier = Modifier.align(Alignment.CenterStart)) {
-                    IconButton(onClick = onBackPress) {
+            Box(modifier = Modifier.align(Alignment.CenterStart)) {
+                if (isBottomSheet) {
+                    IconButton(onClick = { onBackPress.invoke("Slippage") }) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(64.dp)
+                        )
+                    }
+                } else {
+                    IconButton(onClick = { onBackPress.invoke("Back") }) {
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowLeft,
                             contentDescription = "Back",
@@ -48,13 +56,17 @@ fun Title(title: String, isBottomSheet: Boolean = false, onBackPress: () -> Unit
                 )
             }
             if (isBottomSheet) {
-                Box(modifier = Modifier.align(Alignment.CenterEnd).padding(start = 12.dp, end = 4.dp)) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(start = 12.dp, end = 4.dp)
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.close),
                         contentDescription = "Close",
                         modifier = Modifier
                             .size(40.dp)
-                            .clickable { onBackPress.invoke() }
+                            .clickable { onBackPress.invoke("Back") }
                     )
                 }
             }

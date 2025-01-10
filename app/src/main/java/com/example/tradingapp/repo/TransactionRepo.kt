@@ -5,6 +5,8 @@ import com.example.tradingapp.api.ApiService
 import com.example.tradingapp.compose.utils.GlobalNavController
 import com.example.tradingapp.data.MoonPaySignatureResponse
 import com.example.tradingapp.data.Screens
+import com.example.tradingapp.data.SellRequest
+import com.example.tradingapp.data.SellResponse
 import com.example.tradingapp.data.TransactionRequest
 import com.example.tradingapp.data.TransactionResponse
 import com.example.tradingapp.data.TransactionsResponse
@@ -51,7 +53,7 @@ class TransactionRepo(private val apiService: ApiService,private val mainRepo: M
         }
     }
 
-    suspend fun sellTransaction(token: String, request: TransactionRequest): TransactionResponse? {
+    suspend fun sellTransaction(token: String, request: SellRequest): SellResponse? {
         val response = apiService.sellTransaction("Bearer $token", request)
         return if (response.isSuccessful) {
             response.body()

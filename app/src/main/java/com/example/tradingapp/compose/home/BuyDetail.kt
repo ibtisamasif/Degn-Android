@@ -22,13 +22,15 @@ import com.example.tradingapp.compose.utils.Title
 import com.example.tradingapp.ui.theme.OffWhite
 
 @Composable
-fun TransactionDetailUI(imageUrl: String) {
+fun TransactionDetailUI(
+    onBackPress: () -> Unit
+) {
     Scaffold(
         topBar = {
             Box(
                 modifier = Modifier
                     .padding(top = 45.dp)
-            ) { Title(title = "Bought Sani") { } }
+            ) { Title(title = "Bought Sani") { onBackPress.invoke() } }
         },
     ) { paddingValues ->
         Column(
@@ -40,7 +42,7 @@ fun TransactionDetailUI(imageUrl: String) {
             Spacer(modifier = Modifier.height(16.dp))
 
             AsyncImage(
-                model = imageUrl,
+                model = "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.svg",
                 contentDescription = "Profile Picture from URL",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -105,5 +107,5 @@ fun DetailRow(label: String, value: String) {
 @Preview
 @Composable
 fun DetailPreview(){
-    TransactionDetailUI("https://image.solanatracker.io/proxy?url=https%3A%2F%2Fimage.solanatracker.io%2Fproxy%3Furl%3Dhttps%253A%252F%252Fipfs.io%252Fipfs%252FQmW3aXXC1hoQWMoJ6ZxAUJwa5xQSWsJ63WWoM8x4XcdWWq")
+    TransactionDetailUI(onBackPress = {})
 }

@@ -1,6 +1,7 @@
 package com.example.tradingapp.di.koin
 
 import com.example.tradingapp.repo.AuthenticationRepo
+import com.example.tradingapp.repo.CMCRepo
 import com.example.tradingapp.repo.DashboardRepo
 import com.example.tradingapp.repo.MainRepo
 import com.example.tradingapp.repo.ProfileRepo
@@ -15,4 +16,5 @@ val appModule = module {
     single { WalletRepo(get(),get()) }
     single { DashboardRepo(get(),get(),get()) }
     single { TransactionRepo(get(),get()) }
+    single { CMCRepo(get()) }
 }

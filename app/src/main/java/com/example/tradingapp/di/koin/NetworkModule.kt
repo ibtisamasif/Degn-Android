@@ -1,8 +1,10 @@
 package com.example.tradingapp.di.koin
 
 import com.example.tradingapp.api.ApiService
+import com.example.tradingapp.api.CMCService
 import com.example.tradingapp.api.QuoteApiService
 import com.example.tradingapp.utils.Constants.Companion.BASE_URL
+import com.example.tradingapp.utils.Constants.Companion.CMC_BASE_URL
 import com.example.tradingapp.utils.Constants.Companion.QUOTE_API_BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -33,6 +35,15 @@ val networkModule = module {
             .build()
     }
 
+    // CMC configuration
+    single(named("CMCRetrofit")) {
+        Retrofit.Builder()
+            .baseUrl(CMC_BASE_URL)
+            .client(get<OkHttpClient>())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
     // QuoteRetrofit configuration
     single(named("QuoteRetrofit")) {
         Retrofit.Builder()
@@ -50,6 +61,11 @@ val networkModule = module {
     // QuoteApiService for QuoteRetrofit
     single {
         get<Retrofit>(named("QuoteRetrofit")).create(QuoteApiService::class.java)
+    }
+
+    // CMCService for CMCRetrofit
+    single {
+        get<Retrofit>(named("CMCRetrofit")).create(CMCService::class.java)
     }
 }
 

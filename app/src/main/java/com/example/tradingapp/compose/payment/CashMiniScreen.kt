@@ -35,8 +35,6 @@ fun CashMiniScreen(onCloseBottomSheet: (Boolean) -> Unit) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         CashRow(R.drawable.dollar, "Cash:", "$0.00"){onCloseBottomSheet.invoke(true)}
-        CashRow(R.drawable.solana_cash, "Solana:", "$0.00"){onCloseBottomSheet.invoke(true)}
-
     }
 }
 

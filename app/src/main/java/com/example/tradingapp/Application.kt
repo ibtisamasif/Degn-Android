@@ -1,6 +1,9 @@
 package com.example.tradingapp
 
 import android.app.Application
+import coil.Coil
+import coil.ImageLoader
+import coil.decode.SvgDecoder
 import com.example.tradingapp.di.koin.getListOfModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -14,5 +17,12 @@ class Application : Application() {
             androidContext(this@Application)
             modules(getListOfModules())
         }
+        Coil.setImageLoader(
+            ImageLoader.Builder(this)
+                .components {
+                    add(SvgDecoder.Factory())
+                }
+                .build()
+        )
     }
 }

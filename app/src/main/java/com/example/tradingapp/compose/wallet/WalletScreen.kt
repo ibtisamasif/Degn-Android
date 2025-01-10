@@ -1,5 +1,6 @@
 package com.example.tradingapp.compose.wallet
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,6 +49,7 @@ import com.example.tradingapp.ui.theme.TradingAppTheme
 import com.example.tradingapp.viewModels.wallet.WalletViewModel
 import org.koin.androidx.compose.koinViewModel
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun WalletScreen(
     viewModel: WalletViewModel = koinViewModel(),
@@ -78,6 +80,7 @@ fun WalletScreen(
             },
             bottomBar = { BottomNavigationBar(3) { onItemSelected.invoke(it) } }
         ) { paddingValues ->
+            val userBalance = viewModel.userBalance.collectAsState().value
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -123,7 +126,7 @@ fun WalletScreen(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = if(userBalance?.totalBalance != null) "${userBalance?.totalBalance?.let { String.format("%.2f", it) }} USD" else "",
+                    text = "${String.format("%.2f", userBalance?.totalBalance) } USD",
                     style = MaterialTheme.typography.titleLarge,
                 )
 
@@ -176,7 +179,7 @@ fun WalletScreen(
                             style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp)
                         )
                         Text(
-                            text = "$0.01",
+                            text = "$${String.format("%.2f", userBalance?.cashBalance) }",
                             style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
                             modifier = Modifier.padding(start = 8.dp, top = 4.dp)
                         )

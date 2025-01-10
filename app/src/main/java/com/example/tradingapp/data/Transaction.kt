@@ -16,7 +16,24 @@ data class TransactionsResponse(
 
 data class TransactionRequest(
     val amount: String,
-    val token: String
+    val token: String,
+    val slippage: String,
+)
+
+data class SellRequest(
+    val amount: String,
+    val amountInUSDC: String,
+    val token: String,
+    val slippage: String,
+)
+
+data class SellResponse(
+    val status: Status,
+    val body: SellStatusBody
+)
+
+data class SellStatusBody(
+    val status: String
 )
 
 data class TransactionResponse(
@@ -42,6 +59,7 @@ data class Transaction(
     val amount: String,
     val tokenAddress: String,
     val status: String,
+    val fee: String?,
     val type: String,
     val user: String,
     val transaction: String?,

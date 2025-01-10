@@ -55,6 +55,7 @@ import com.example.tradingapp.ui.theme.TradingAppTheme
 import com.example.tradingapp.ui.theme.gradient
 import com.example.tradingapp.viewModels.home.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 @Composable
@@ -64,7 +65,7 @@ fun HomeScreen(
     onItemSelected: (String) -> Unit,
 ) {
     LaunchedEffect(Unit) {
-        if(!viewModel.isTokensLoaded) {
+        if (!viewModel.isTokensLoaded) {
             viewModel.fetchBalance()
             viewModel.fetchTokens()
             viewModel.fetchSpotlightTokens()
@@ -100,7 +101,9 @@ fun HomeScreen(
                     BalanceSection(viewModel = viewModel)
                 }
                 Spacer(modifier = Modifier.height(if (isHome) 16.dp else 12.dp))
-                SpotlightSection(viewModel = viewModel)
+                SpotlightSection(viewModel = viewModel, onItemSelected = {
+                    onItemSelected.invoke(Screens.CoinDetailScreen.route+"/${it}")
+                })
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Box(
@@ -108,19 +111,39 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .padding(bottom = paddingValues.calculateBottomPadding())
                 ) {
-                    viewModel.tokens.let {
-                        it.value?.let { it1 ->
-                            ListSection(
-                                list = it1,
-                                viewModel = viewModel,
-                                onItemSelected = {
-                                    onItemSelected.invoke(Screens.CoinDetailScreen.route)
-                                },
-                                onLoadMore = {
-                                    viewModel.offset.intValue += 10
-                                    viewModel.fetchTokens()
-                                }
-                            )
+                    if (isHome) {
+                        viewModel.tokens.let {
+                            it.value?.let { it1 ->
+                                ListSection(
+                                    list = it1,
+                                    viewModel = viewModel,
+                                    isHome = true,
+                                    onItemSelected = { id->
+                                        onItemSelected.invoke(Screens.CoinDetailScreen.route+"/${id}")
+                                    },
+                                    onLoadMore = {
+                                        viewModel.offset.intValue += 10
+                                        viewModel.fetchTokens()
+                                    }
+                                )
+                            }
+                        }
+                    } else {
+                        viewModel.spotlightTokens.let {
+                            it.value?.let { it1 ->
+                                ListSection(
+                                    list = it1,
+                                    viewModel = viewModel,
+                                    isHome = false,
+                                    onItemSelected = {
+                                        onItemSelected.invoke(Screens.CoinDetailScreen.route)
+                                    },
+                                    onLoadMore = {
+                                        viewModel.offset.intValue += 10
+                                        viewModel.fetchMoreSpotlightTokens()
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -129,13 +152,14 @@ fun HomeScreen(
         if (viewModel.isLoading.value) {
             CircularProgress()
         }
-        if (isShowSheet) BottomSheet(screenName = "Search", onCloseBottomSheet =  {
+        if (isShowSheet) BottomSheet(screenName = "Search", onCloseBottomSheet = {
             isShowSheet = it
-        },amount = {})
+        }, amount = {})
     }
 
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun BalanceSection(viewModel: HomeViewModel) {
     val balance = viewModel.userBalance.collectAsState().value
@@ -147,21 +171,34 @@ fun BalanceSection(viewModel: HomeViewModel) {
     ) {
         Text("Total balance", style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = if(balance?.totalBalance != null) "${balance.totalBalance?.let { String.format("%.2f", it) }} USD" else "", style = MaterialTheme.typography.titleLarge)
+        Text(
+            text = if (balance?.totalBalance != null) "${
+                balance.totalBalance.let {
+                    String.format(
+                        "%.2f",
+                        it
+                    )
+                }
+            } USD" else "", style = MaterialTheme.typography.titleLarge
+        )
     }
 }
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun SpotlightSection(viewModel: HomeViewModel) {
-    val tokens = viewModel.spotlightTokens.value ?: emptyList()
-    if (tokens.isNotEmpty()) {
+fun SpotlightSection(viewModel: HomeViewModel, onItemSelected: (String) -> Unit) {
+    val tokens = viewModel.spotlightTokens.collectAsState().value
+    if (tokens?.isNotEmpty() == true) {
         val firstToken = tokens[0]
 
         Card(
             shape = RoundedCornerShape(21.5.dp),
             border = BorderStroke(1.dp, gradient),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    viewModel.selectedCoinId.value = firstToken._id
+                    onItemSelected.invoke(firstToken._id)
+                }
         ) {
             Column(
                 modifier = Modifier
@@ -210,7 +247,7 @@ fun SpotlightSection(viewModel: HomeViewModel) {
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     AsyncImage(
-                        model = firstToken.image,
+                        model = firstToken.icon,
                         contentDescription = "Spotlight",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -258,23 +295,27 @@ fun SpotlightSection(viewModel: HomeViewModel) {
 fun ListSection(
     list: List<TokenDetails>,
     viewModel: HomeViewModel,
-    onItemSelected: () -> Unit,
+    isHome: Boolean,
+    onItemSelected: (String) -> Unit,
     onLoadMore: () -> Unit
 ) {
     LazyColumn {
         items(list.size) { index ->
             ListItem(
                 id = list[index]._id,
-                image = list[index].image,
+                image = list[index].icon,
                 name = list[index].name,
-                price = "$" + "%.2f".format(list[index].price.toDouble()),
-                marketCap = "$${list[index].marketCap.toDouble().roundToInt()} MKT CAP",
-                isPositive = index % 2 == 0,
+                price = "$" + viewModel.formatDouble(list[index].price.toDouble()),
+                marketCap = "$${viewModel.abbreviateNumber(list[index].marketCap.toLong())} MKT CAP",
+                item = list[index],
                 viewModel = viewModel,
                 onItemSelected = onItemSelected
             )
-            if (index == list.lastIndex && viewModel.newItemLoaded.value) {
+            if (index == list.lastIndex && viewModel.newItemLoaded.value && isHome) {
                 viewModel.newItemLoaded.value = false
+                onLoadMore()
+            } else if (index == list.lastIndex && viewModel.newSpotLightItemLoaded.value && !isHome) {
+                viewModel.newSpotLightItemLoaded.value = false
                 onLoadMore()
             }
         }
@@ -288,18 +329,24 @@ fun ListItem(
     image: String,
     name: String,
     price: String,
+    item: TokenDetails,
     marketCap: String,
-    isPositive: Boolean,
     viewModel: HomeViewModel,
-    onItemSelected: () -> Unit
+    onItemSelected: (String) -> Unit
 ) {
+    val change = item.priceChange24h.toDoubleOrNull() ?: 0.0
+    val changeText = if (change > 0) {
+        "▲ %.3f%%".format(change)
+    } else {
+        "▼ %.3f%%".format(abs(change))
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
                 viewModel.selectedCoinId.value = id
-                onItemSelected.invoke()
+                onItemSelected.invoke(id)
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -319,11 +366,11 @@ fun ListItem(
         Spacer(modifier = Modifier.weight(1f))
         Column(horizontalAlignment = Alignment.End) {
             Text(price, style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp))
-            Text(
-                text = if (isPositive) "▲ 200.56%" else "▼ 200.56%",
-                color = if (isPositive) Green else Red,
-                style = MaterialTheme.typography.displayMedium
-            )
+                Text(
+                    text = changeText,
+                    color = if (change > 0) Green else Red,
+                    style = MaterialTheme.typography.displayMedium
+                )
         }
     }
 }

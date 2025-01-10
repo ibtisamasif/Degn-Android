@@ -1,5 +1,6 @@
 package com.example.tradingapp.compose.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +38,7 @@ import java.time.ZoneId
 @Composable
 fun ActivityScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    onBackPress: () -> Unit,
+    onItemSelected: (String) -> Unit,
 ) {
     LaunchedEffect(Unit) {
         viewModel.fetchTransaction(0)
@@ -47,7 +48,7 @@ fun ActivityScreen(
             Box(
                 modifier = Modifier
                     .padding(top = 45.dp)
-            ) { Title(title = "Activity") { onBackPress.invoke() } }
+            ) { Title(title = "Activity") { onItemSelected.invoke("Back") } }
         },
         bottomBar = { BottomNavigationBar(0) {} }
     ) { paddingValues ->
@@ -59,14 +60,16 @@ fun ActivityScreen(
         ) {
             val transactions = viewModel.transactions.collectAsState().value
             if (transactions != null) {
-                TransactionList(viewModel = viewModel, transactions)
+                TransactionList(viewModel = viewModel, transactions){
+                    onItemSelected.invoke(it)
+                }
             }
         }
     }
 }
 
 @Composable
-fun TransactionList(viewModel: HomeViewModel, transactions: List<Transaction>) {
+fun TransactionList(viewModel: HomeViewModel, transactions: List<Transaction>,onItemSelected: (String) -> Unit,) {
     val today = LocalDate.now()
     val yesterday = today.minusDays(1)
 
@@ -88,22 +91,26 @@ fun TransactionList(viewModel: HomeViewModel, transactions: List<Transaction>) {
                 )
             }
             items(transactionsForDate.size) { transaction ->
-                TransactionItem(viewModel = viewModel, transactionsForDate[transaction])
+                TransactionItem(viewModel = viewModel, transactionsForDate[transaction]){
+                    onItemSelected.invoke(it)
+                }
             }
         }
     }
 }
 
 @Composable
-fun TransactionItem(viewModel: HomeViewModel, transaction: Transaction) {
+fun TransactionItem(viewModel: HomeViewModel, transaction: Transaction, onItemSelected: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
+            .padding(vertical = 16.dp)
+            .clickable { onItemSelected.invoke("id") }
+        ,
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = transaction.token.image,
+            model = transaction.token.icon,
             contentDescription = "Profile Picture from URL",
             contentScale = ContentScale.Crop,
             modifier = Modifier

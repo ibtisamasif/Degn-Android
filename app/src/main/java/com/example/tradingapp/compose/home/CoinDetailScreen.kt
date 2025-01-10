@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -38,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -57,27 +55,40 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import kotlin.math.abs
 
 @Composable
 fun CoinDetailScreen(
+    tokenId: String,
     viewModel: HomeViewModel = koinViewModel(),
     onBackPress: () -> Unit
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(tokenId) {
+        viewModel.stopFetchingCryptoData()
+
         viewModel.isLoading.value = true
-        viewModel.fetchTokenByID(viewModel.selectedCoinId.value)
-        viewModel.fetchUserTokenBalance(viewModel.selectedCoinId.value)
+        viewModel.setCryptoData(null)
+
+        viewModel.fetchTokenByID(tokenId)
+        viewModel.fetchUserTokenBalance(tokenId)
+        viewModel.startFetchingCryptoData()
     }
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
+    val balance = viewModel.userTokenBalance.collectAsState()
+    val tokenBalance = viewModel.tokenBalance.collectAsState()
+
     Scaffold(
         topBar = {
             Box(
                 modifier = Modifier
                     .padding(top = 32.dp)
-            ) { Title(title = "") { onBackPress.invoke() } }
+            ) { Title(title = "") {
+                onBackPress.invoke()
+            } }
         },
     ) { paddingValues ->
         Column(
@@ -107,9 +118,6 @@ fun CoinDetailScreen(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    val balance = viewModel.userTokenBalance.collectAsState()
-                    val tokenBalance = viewModel.tokenBalance.collectAsState()
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -132,7 +140,7 @@ fun CoinDetailScreen(
                                     textColor = Color.White,
                                     buttonColor = Red,
                                     modifier = Modifier.weight(1f),
-                                    onClick = {viewModel.transaction.value = "Sell"}
+                                    onClick = { viewModel.transaction.value = "Sell" }
                                 )
                             } else {
                                 BuySellButton(
@@ -141,7 +149,7 @@ fun CoinDetailScreen(
                                     buttonColor = Green,
                                     modifier = Modifier.fillMaxWidth(),
                                     onClick = {
-                                        if(balance.value?.cashBalance!! > 0) {
+                                        if (balance.value?.cashBalance != null && balance.value?.cashBalance!! > 0) {
                                             viewModel.transaction.value = "Buy"
                                         }
                                     }
@@ -155,20 +163,34 @@ fun CoinDetailScreen(
             }
         }
     }
-    if(viewModel.isLoading.value){
+    if (viewModel.isLoading.value) {
         CircularProgress()
     }
 
-    if(viewModel.transaction.value != ""){
-        BottomSheet(screenName = viewModel.transaction.value, onCloseBottomSheet =  {
-            viewModel.transaction.value = "" }, amount = {amount ->
-            coroutineScope.launch {
-                if(viewModel.transaction.value == "Buy") viewModel.buyTransaction(amount)
-                else viewModel.sellTransaction(amount)
-            }
-        })
-    }
+    val userBalance = viewModel.userBalance.collectAsState().value
 
+    if (viewModel.transaction.value != "") {
+        userBalance?.cashBalance?.let {
+            BottomSheet(
+                screenName = viewModel.transaction.value,
+                onCloseBottomSheet = {
+                    coroutineScope.launch {
+                        viewModel.transaction.value = ""
+                    }
+                },
+                currentBalance = it,
+                amount = { amount ->
+                    coroutineScope.launch {
+                        if (viewModel.transaction.value == "Buy") {
+                            viewModel.buyTransaction(amount)
+                        } else {
+                            viewModel.sellTransaction(amount)
+                        }
+                    }
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -176,14 +198,24 @@ fun CoinHeader(
     viewModel: HomeViewModel
 ) {
     val token by viewModel.token.collectAsState()
+    val cryptoData = viewModel.cryptoData.collectAsState().value?.quote?.USD?.price
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
     ) {
+        val change = viewModel.token.collectAsState().value?.priceChange24h?.toDoubleOrNull() ?: 0.0
+        val price = viewModel.token.collectAsState().value?.price
+        val totalChange = (price?.toDoubleOrNull() ?: 0.0) * abs(change/100)
+        val symbol = if(change>0) "▲" else "▼"
+        val changeText = if (change > 0) {
+            "%.3f%%".format(change)
+        } else {
+            "%.3f%%".format(abs(change))
+        }
         Row(modifier = Modifier.fillMaxWidth()) {
             AsyncImage(
-                model = token?.image ?: "",
+                model = token?.icon ?: "",
                 contentDescription = "Spotlight",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -200,14 +232,15 @@ fun CoinHeader(
         Spacer(modifier = Modifier.height(4.dp))
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                "$" + "%.6f".format(token?.marketCap?.toDoubleOrNull() ?: 0.0),
+                text = "$" + "%.10f".format(cryptoData ?: token?.price?.toDoubleOrNull() ?: 0.0
+                ),
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp)
             )
             Row {
                 Text(
-                    "$0.29% (200.34%)",
+                    "$symbol $${viewModel.formatDouble(totalChange)} (${changeText})",
                     style = MaterialTheme.typography.displayMedium,
-                    color = Green
+                    color = if(change>0) Green else Red
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text("Past day", style = MaterialTheme.typography.bodySmall)
@@ -215,7 +248,6 @@ fun CoinHeader(
         }
     }
 }
-
 
 @Composable
 fun GraphSection() {
@@ -306,9 +338,11 @@ fun BalanceDetail(
                 ) {
                     Text("Value", style = MaterialTheme.typography.labelMedium)
                     Text(
-                        text = if(tokenBalance.value != null) "${tokenBalance.value?.toDoubleOrNull()?.let {
-                            String.format("%.4f", it)
-                        }} USD" else "0.00 USD",
+                        text = if (tokenBalance.value != null) "${
+                            tokenBalance.value?.toDoubleOrNull()?.let {
+                                viewModel.formatDouble(it)
+                            }
+                        } USD" else "0.00 USD",
                         style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp)
                     )
                 }
@@ -316,9 +350,14 @@ fun BalanceDetail(
                     modifier = Modifier.padding(start = 16.dp)
                 ) {
                     Text("Quantity", style = MaterialTheme.typography.labelMedium)
-                    Text(text = if(tokenQuantity.value != null) "${tokenQuantity.value?.toDoubleOrNull()?.let {
-                        String.format("%.4f", it)
-                    }}" else "0", style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp))
+                    Text(
+                        text = if (tokenQuantity.value != null) "${
+                            tokenQuantity.value?.toDoubleOrNull()?.let {
+                                viewModel.formatDouble(it)
+                            }
+                        }" else "0",
+                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp)
+                    )
                 }
             }
         }
@@ -373,6 +412,7 @@ fun AboutSection(
 
 @Composable
 fun CoinDataSection(viewModel: HomeViewModel) {
+    val token by viewModel.token.collectAsState()
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -392,7 +432,10 @@ fun CoinDataSection(viewModel: HomeViewModel) {
                     "Market cap",
                     style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp)
                 )
-                Text("$219M", style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp))
+                Text(
+                    "$${token?.marketCap?.let { viewModel.abbreviateNumber(it.toLong()) }}",
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp)
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -400,7 +443,10 @@ fun CoinDataSection(viewModel: HomeViewModel) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Volume", style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp))
-                Text("$5219M", style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp))
+                Text(
+                    "$${token?.volume?.let { viewModel.abbreviateNumber(it) }}",
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp)
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -408,7 +454,10 @@ fun CoinDataSection(viewModel: HomeViewModel) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Holders", style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp))
-                Text("100k", style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp))
+                Text(
+                    "$${token?.holder?.let { viewModel.abbreviateNumber(it.toLong()) }}",
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp)
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -419,18 +468,26 @@ fun CoinDataSection(viewModel: HomeViewModel) {
                     "Circulating supply",
                     style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp)
                 )
-                Text("999M", style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp))
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Created", style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp))
                 Text(
-                    viewModel.tokenCreationDate.value,
+                    "$${token?.supply?.let { viewModel.abbreviateNumber(it.toLong()) }}",
                     style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp)
                 )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            if (viewModel.tokenCreationDate.value != "") {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        "Created",
+                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp)
+                    )
+                    Text(
+                        viewModel.tokenCreationDate.value,
+                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp)
+                    )
+                }
             }
         }
     }
@@ -451,10 +508,12 @@ fun BuySellButton(
         colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Box(modifier = Modifier
-            .size(24.dp)
-            .clip(CircleShape)
-            .background(textColor)) {
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .clip(CircleShape)
+                .background(textColor)
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.dollar_icon),
                 contentDescription = null,
@@ -464,6 +523,11 @@ fun BuySellButton(
                 tint = buttonColor
             )
         }
-        Text(buttonText, fontSize = 18.sp, color = textColor, modifier = Modifier.padding(start = 8.dp, bottom = 2.dp))
+        Text(
+            buttonText,
+            fontSize = 18.sp,
+            color = textColor,
+            modifier = Modifier.padding(start = 8.dp, bottom = 2.dp)
+        )
     }
 }

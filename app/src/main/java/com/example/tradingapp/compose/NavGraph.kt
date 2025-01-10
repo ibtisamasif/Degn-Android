@@ -12,6 +12,7 @@ import com.example.tradingapp.compose.export.VerifyOTP
 import com.example.tradingapp.compose.home.ActivityScreen
 import com.example.tradingapp.compose.home.CoinDetailScreen
 import com.example.tradingapp.compose.home.HomeScreen
+import com.example.tradingapp.compose.home.TransactionDetailUI
 import com.example.tradingapp.compose.notification.NotificationScreen
 import com.example.tradingapp.compose.profile.ProfileScreen
 import com.example.tradingapp.compose.rewards.RewardScreen
@@ -21,10 +22,15 @@ import com.example.tradingapp.compose.support.LegalAndPrivacy
 import com.example.tradingapp.compose.utils.GlobalNavController
 import com.example.tradingapp.compose.wallet.WalletScreen
 import com.example.tradingapp.data.Screens
+import com.example.tradingapp.di.pref.DegnSharedPref
 import com.example.tradingapp.utils.BiometricPromptManager
 
 @Composable
-fun NavController(activity: MainActivity, promptManager: BiometricPromptManager,openMoonPaySDK: (String)-> Unit) {
+fun NavController(
+    activity: MainActivity,
+    promptManager: BiometricPromptManager,
+    openMoonPaySDK: (String) -> Unit
+) {
     val navController = rememberNavController()
     GlobalNavController.navController = navController
     NavHost(
@@ -32,35 +38,35 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager,
         startDestination = Screens.SplashScreen.route,
     ) {
         composable(route = Screens.SplashScreen.route) {
-            SplashScreen(navController=navController)
+            SplashScreen(navController = navController)
         }
 
         composable(route = Screens.SliderScreen.route) {
-            SliderScreen{
+            SliderScreen {
                 navController.navigate(Screens.EmailScreen.route)
             }
         }
 
         composable(route = Screens.EmailScreen.route) {
             EmailScreen(true, promptManager) {
-                when(it){
-                    "Biometric"-> navController.navigate(Screens.HomeScreen.route)
-                    "Back"-> navController.navigateUp()
-                    else ->  navController.navigate(Screens.OTPScreen.route)
+                when (it) {
+                    "Biometric" -> navController.navigate(Screens.HomeScreen.route)
+                    "Back" -> navController.navigateUp()
+                    else -> navController.navigate(Screens.OTPScreen.route)
                 }
             }
         }
 
         composable(route = Screens.OTPScreen.route) {
             EmailScreen(false, promptManager) {
-                if(it=="Back") navController.navigateUp()
+                if (it == "Back") navController.navigateUp()
                 else navController.navigate(Screens.HomeScreen.route)
             }
         }
 
         composable(route = Screens.HomeScreen.route) {
             HomeScreen(isHome = true) {
-              navController.navigate(it)
+                navController.navigate(it)
             }
         }
 
@@ -78,35 +84,35 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager,
 
         composable(route = Screens.WalletScreen.route) {
             WalletScreen {
-                when(it){
+                when (it) {
                     "Sell" -> openMoonPaySDK.invoke("Sell")
                     "Buy" -> openMoonPaySDK.invoke("Buy")
-                     else -> navController.navigate(it)
+                    else -> navController.navigate(it)
                 }
             }
         }
 
         composable(route = Screens.SettingScreen.route) {
-            SettingsScreen{
-                when(it){
-                    "Notifications"-> navController.navigate(Screens.NotificationScreen.route)
-                    "Export Keys"-> navController.navigate(Screens.ExportScreen.route)
-                    "Legal & Privacy"-> navController.navigate(Screens.LegalScreen.route)
-                    "Profile"-> navController.navigate(Screens.ProfileScreen.route)
+            SettingsScreen {
+                when (it) {
+                    "Notifications" -> navController.navigate(Screens.NotificationScreen.route)
+                    "Export Keys" -> navController.navigate(Screens.ExportScreen.route)
+                    "Legal & Privacy" -> navController.navigate(Screens.LegalScreen.route)
+                    "Profile" -> navController.navigate(Screens.ProfileScreen.route)
                     "Back" -> navController.navigateUp()
                 }
             }
         }
 
         composable(route = Screens.LegalScreen.route) {
-            LegalAndPrivacy{
+            LegalAndPrivacy {
                 navController.navigateUp()
             }
         }
 
         composable(route = Screens.ExportScreen.route) {
-            ExportKeysScreen{
-                when(it){
+            ExportKeysScreen {
+                when (it) {
                     "SecretKey" -> navController.navigate(Screens.VerifyOTPScreen.route)
                     "Back" -> navController.navigateUp()
                 }
@@ -114,31 +120,43 @@ fun NavController(activity: MainActivity, promptManager: BiometricPromptManager,
         }
 
         composable(route = Screens.NotificationScreen.route) {
-            NotificationScreen{
+            NotificationScreen {
                 navController.navigateUp()
             }
         }
 
         composable(route = Screens.ProfileScreen.route) {
-            ProfileScreen{
+            ProfileScreen {
                 navController.navigateUp()
             }
         }
 
         composable(route = Screens.ActivityScreen.route) {
-            ActivityScreen{
+            ActivityScreen {
+                when (it) {
+                    "Back" -> navController.navigateUp()
+                    else -> navController.navigate(Screens.TransactionDetailScreen.route)
+                }
+
+            }
+        }
+
+        composable(route = Screens.CoinDetailScreen.route + "/{tokenId}") { backStackEntry ->
+            val tokenId = backStackEntry.arguments?.getString("tokenId") ?: ""
+            CoinDetailScreen(tokenId = tokenId) {
                 navController.navigateUp()
             }
         }
 
-        composable(route = Screens.CoinDetailScreen.route) {
-            CoinDetailScreen{
+
+        composable(route = Screens.TransactionDetailScreen.route) {
+            TransactionDetailUI {
                 navController.navigateUp()
             }
         }
 
         composable(route = Screens.VerifyOTPScreen.route) {
-            VerifyOTP{
+            VerifyOTP {
                 navController.navigateUp()
             }
         }
