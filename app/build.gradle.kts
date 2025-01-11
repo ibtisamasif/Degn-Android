@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.tradingapp"
+    namespace = "com.example.degn"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.tradingapp"
+        applicationId = "com.example.degn"
         minSdk = 28
         targetSdk = 34
         versionCode = 1

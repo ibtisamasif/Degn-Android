@@ -20,12 +20,12 @@
         android:roundIcon="@drawable/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TradingApp"
+        android:theme="@style/Theme.DegnApp"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.TradingApp">
+            android:theme="@style/Theme.DegnApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
