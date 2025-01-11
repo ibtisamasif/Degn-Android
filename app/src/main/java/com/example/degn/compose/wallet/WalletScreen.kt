@@ -61,7 +61,6 @@ fun WalletScreen(
     }
     var openSheet by remember { mutableStateOf(false) }
     var sheetName by remember { mutableStateOf("") }
-    val userBalance by viewModel.userBalance.collectAsState()
     DegnAppTheme {
         Scaffold(
             topBar = {

@@ -109,7 +109,7 @@ fun RecentList(count: Int) {
         items(count) { index ->
             RecentSearchItem(
                 image = if (index % 3 == 0) R.drawable.chill_doge else if (index % 3 == 1) R.drawable.dino else R.drawable.bonk,
-                name = "CB"
+                name = "CB" // Todo revisit hardcoded string
             )
         }
     }

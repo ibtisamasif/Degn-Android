@@ -10,13 +10,10 @@ import com.example.degn.R
 
 val InterThin = FontFamily(Font(R.font.inter_thin))
 val InterLight = FontFamily(Font(R.font.inter_light))
-val InterExtraLight = FontFamily(Font(R.font.inter_extra_light))
 val InterNormal = FontFamily(Font(R.font.inter_regular))
 val InterMedium = FontFamily(Font(R.font.inter_medium))
 val InterSemiBold = FontFamily(Font(R.font.inter_semi_bold))
 val InterBold = FontFamily(Font(R.font.inter_bold))
-val InterExtraBold = FontFamily(Font(R.font.inter_extra_bold))
-val InterBlack = FontFamily(Font(R.font.inter_black))
 
 val Typography = Typography(
 

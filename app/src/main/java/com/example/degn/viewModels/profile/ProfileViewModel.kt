@@ -36,7 +36,6 @@ class ProfileViewModel(
 ) : ViewModel() {
     private val _userProfile = MutableStateFlow<User?>(null)
     private val _deleteUserResult = MutableStateFlow<Boolean?>(null)
-    val deleteUserResult: StateFlow<Boolean?> = _deleteUserResult.asStateFlow()
     var email = mutableStateOf("")
     var username = mutableStateOf("")
     var image = mutableStateOf("")
@@ -63,7 +62,7 @@ class ProfileViewModel(
                 pref.put(WALLET_KEY, _userProfile.value?.walletInfo?.turnKeyWalletId.toString())
                 pref.put(CONST_IMAGE_URL, _userProfile.value?.profileUrl.toString())
                 pref.put(JOINED_AT, joinedAt)
-                if (referralCode.value.isNullOrEmpty()) pref.put(REFERRAL_CODE, "12345")
+                if (referralCode.value.isEmpty()) pref.put(REFERRAL_CODE, "12345")
                 else pref.put(REFERRAL_CODE, _userProfile.value?.referralCode.toString())
             } catch (e: Exception) {
                 Log.e("error", e.message.toString())
@@ -114,8 +113,7 @@ class ProfileViewModel(
                 pref.put(WALLET_KEY, _userProfile.value?.walletInfo?.turnKeyWalletId.toString())
                 pref.put(CONST_IMAGE_URL, _userProfile.value?.profileUrl.toString())
                 pref.put(JOINED_AT, joinedAt)
-            } catch (e: Exception) {
-
+            } catch (_: Exception) {
             }
         }
     }

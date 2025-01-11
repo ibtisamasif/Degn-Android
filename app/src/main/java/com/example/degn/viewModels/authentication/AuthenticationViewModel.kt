@@ -19,16 +19,13 @@ class AuthenticationViewModel(
     private val pref: DegnSharedPref
 ) : ViewModel() {
     private val _connectResponse = MutableStateFlow<ConnectAccountResponse?>(null)
-    val connectResponse: StateFlow<ConnectAccountResponse?> = _connectResponse
     var email = mutableStateOf("")
     var otp = mutableStateOf("")
     var isTimerRunning = mutableStateOf(false)
     var remainingTime = mutableIntStateOf(0)
-    var showBiometric: Boolean = false
     var startTimer: Boolean = true
 
     private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
 
     fun isUserLogin(): Boolean{
         return !pref.getAccessToken().isNullOrEmpty()

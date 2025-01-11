@@ -323,6 +323,7 @@ class HomeViewModel(
 //            tokenBalance.value?.let { it1 -> numberIntoDecimals(it1,it.decimals) }) }
     }
 
+    // Todo make a proper formatter for date/time formatting and relocate these functions.
     fun formatTime(inputTime: String): String {
         val instant = Instant.parse(inputTime)
         val localTime = instant.atZone(ZoneId.systemDefault()).toLocalTime()

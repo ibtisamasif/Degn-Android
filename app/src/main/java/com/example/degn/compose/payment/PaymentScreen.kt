@@ -35,7 +35,7 @@ fun PaymentScreen(
 ) {
     var amount by remember { mutableStateOf("0.00") }
     var screenName by remember { mutableStateOf("") }
-    var isUiEnabled by remember { mutableStateOf(true) }
+    var isUIEnabled by remember { mutableStateOf(true) }
 
     val tokenQuantity = viewModel.tokenQuantity.collectAsState().value
     val token = viewModel.token.collectAsState().value
@@ -51,7 +51,7 @@ fun PaymentScreen(
             title = title,
             isBottomSheet = true
         ) {
-            if (isUiEnabled){
+            if (isUIEnabled){
                 when(it){
                     "Back"->onCloseBottomSheet.invoke(true)
                     "Slippage"-> screenName = it
@@ -67,7 +67,7 @@ fun PaymentScreen(
         ) {
             SelectCashBox(
                 currentBalance = currentBalance,
-                isUiEnabled = isUiEnabled,
+                isUIEnabled = isUIEnabled,
                 onCashBoxClick = { screenName = "CashMini" }
             )
 
@@ -83,7 +83,7 @@ fun PaymentScreen(
             if (title !in listOf("Send", "Buy", "Sell")) {
                 Spacer(modifier = Modifier.height(24.dp))
                 SelectCardBox(
-                    isUiEnabled = isUiEnabled,
+                    isUIEnabled = isUIEnabled,
                     onCardBoxClick = { screenName = "DepositMini" }
                 )
             }
@@ -93,7 +93,7 @@ fun PaymentScreen(
             PercentageSelectionRow(
                 totalValue = totalValue,
                 currentAmount = amount,
-                isUiEnabled = isUiEnabled
+                isUIEnabled = isUIEnabled
             ) { selectedAmount ->
                 amount = selectedAmount
             }
@@ -102,7 +102,7 @@ fun PaymentScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         NumericKeypad(onKeyPress = { key ->
-            if (isUiEnabled) {
+            if (isUIEnabled) {
                 amount = updateAmount(amount, key, currentBalance)
 
             }
@@ -116,9 +116,9 @@ fun PaymentScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             ConfirmationButton {
-                if (isUiEnabled) {
+                if (isUIEnabled) {
                     amountString.invoke(amount)
-                    isUiEnabled = false
+                    isUIEnabled = false
                 }
             }
         }
@@ -136,14 +136,14 @@ fun PaymentScreen(
 @Composable
 private fun SelectCashBox(
     currentBalance: Double,
-    isUiEnabled: Boolean,
+    isUIEnabled: Boolean,
     onCashBoxClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
             .padding(1.dp)
-            .clickable(enabled = isUiEnabled) { onCashBoxClick() }
+            .clickable(enabled = isUIEnabled) { onCashBoxClick() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -175,14 +175,14 @@ private fun SelectCashBox(
 @Composable
 private fun SlipPageBox(
     currentBalance: Double,
-    isUiEnabled: Boolean,
+    isUIEnabled: Boolean,
     onCashBoxClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
             .padding(1.dp)
-            .clickable(enabled = isUiEnabled) { onCashBoxClick() }
+            .clickable(enabled = isUIEnabled) { onCashBoxClick() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -214,14 +214,14 @@ private fun SlipPageBox(
 
 @Composable
 private fun SelectCardBox(
-    isUiEnabled: Boolean,
+    isUIEnabled: Boolean,
     onCardBoxClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
             .padding(1.dp)
-            .clickable(enabled = isUiEnabled) { onCardBoxClick() }
+            .clickable(enabled = isUIEnabled) { onCardBoxClick() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -254,7 +254,7 @@ private fun SelectCardBox(
 private fun PercentageSelectionRow(
     totalValue: Double,
     currentAmount: String,
-    isUiEnabled: Boolean,
+    isUIEnabled: Boolean,
     onAmountSelected: (String) -> Unit
 ) {
     var selectedPercentage by remember { mutableStateOf("") }
@@ -279,7 +279,7 @@ private fun PercentageSelectionRow(
                     .background(
                         if (selectedPercentage == label) Purple else Color.White
                     )
-                    .clickable(enabled = isUiEnabled) {
+                    .clickable(enabled = isUIEnabled) {
                         selectedPercentage = if(selectedPercentage == label) "" else label
                         onAmountSelected(truncatedValue)
                     },

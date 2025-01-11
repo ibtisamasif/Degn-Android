@@ -35,6 +35,6 @@ class WalletViewModel(
     }
 
     fun setAmount(amount: String){
-        pref.put("Amount",amount);
+        pref.put("Amount", amount) // TODO change with constant.
     }
 }

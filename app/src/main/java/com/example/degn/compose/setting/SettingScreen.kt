@@ -129,8 +129,8 @@ fun SettingsScreen(
                 Pair(R.drawable.logout, "Log out")
             )
 
-            settingsItems.forEach { item ->
-                SettingItem(icon = item.first, title = item.second) { item ->
+            settingsItems.forEach { oneItem ->
+                SettingItem(icon = oneItem.first, title = oneItem.second) { item ->
                     if (item == "Support") isShowSheet = true
                     else onMenuCLicked.invoke(item)
                 }

@@ -16,7 +16,6 @@ class ExportViewModel(
 ) : ViewModel() {
 
     private val _otpStatus = MutableStateFlow<String?>(null)
-    val otpStatus: StateFlow<String?> = _otpStatus
     val walletKey = pref.getString(WALLET_KEY).toString()
 
     private val _secretPhrase = MutableStateFlow<List<String>?>(null)

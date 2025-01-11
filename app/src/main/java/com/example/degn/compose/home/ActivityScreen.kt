@@ -71,7 +71,7 @@ fun ActivityScreen(
 @Composable
 fun TransactionList(viewModel: HomeViewModel, transactions: List<Transaction>,onItemSelected: (String) -> Unit,) {
     val today = LocalDate.now()
-    val yesterday = today.minusDays(1)
+    today.minusDays(1)
 
     val sortedTransactions = transactions.sortedWith(compareByDescending<Transaction> {
         Instant.parse(it.createdAt).atZone(ZoneId.systemDefault()).toLocalDate()
